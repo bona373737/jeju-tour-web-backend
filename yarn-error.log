@@ -1,0 +1,37 @@
+Arguments: 
+  C:\Tools\nodejs\node.exe C:\Users\bona3\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add dotenv winston winston-daily-rotate-file node-schedule dayjs express express-useragent body-parser method-override cookie-parser express-session multer node-thumbnail node-schedule nodemailer serve-favicon serve-static mysql2 mybatis-mapper cors
+
+PATH: 
+  C:\Program Files (x86)\VMware\VMware Player\bin\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files\Bandizip\;C:\Program Files\Git\cmd;C:\Tools\mysql-8.0.20-winx64\bin;C:\Tools\nodejs\;C:\Users\bona3\AppData\Local\Microsoft\WindowsApps;;C:\Users\bona3\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\bona3\AppData\Roaming\npm
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  16.16.0
+
+Platform: 
+  win32 x64
+
+Trace: 
+  SyntaxError: C:\Workspace\Ezen\jeju-tour-web-backend\package.json: Unexpected token } in JSON at position 122
+      at JSON.parse (<anonymous>)
+      at C:\Users\bona3\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:1629:59
+      at Generator.next (<anonymous>)
+      at step (C:\Users\bona3\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:310:30)
+      at C:\Users\bona3\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "jeju-tour-web(backend)",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "type": "module",
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

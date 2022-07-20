@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MemberMapper">
+
+    <select id="selectItem">
+      SELECT member_no, username FROM members WHERE member_no=#{member_no};
+    </select>
+
+    <!-- 회원가입_프로필이미지는 기본값 설정 -->
+    <insert id="insertItem">
+        INSERT INTO members (userid,password,username,birthday,email) 
+        VALUES (#{userid},#{password},#{username}, #{birthday}, #{email}); 
+    </insert>
+
+    <!-- 프로필 수정 : 수정은 생년월일,이메일주소,프로필사진만 변경가능 -->
+    <update id="updateItem">
+        UPDATE members SET birthday=#{birthday}, email=#{email}, profile_img = #{profile_img}
+        WHERE member_no=#{member_no};
+    </update>
+
+</mapper>

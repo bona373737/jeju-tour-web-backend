@@ -20,7 +20,7 @@ import bodyParser from 'body-parser';
 import methodOverride from 'method-override'; 
 import cookieParser from 'cookie-parser'; 
 import expressSession from 'express-session'; 
-
+import cors from 'cors';
 /** 예외처리 관련 클래스 */
 import PageNotFoundException from './exceptions/PageNotFoundException.js';
 
@@ -35,6 +35,7 @@ import PageNotFoundException from './exceptions/PageNotFoundException.js';
 import DepartmentController from './controllers/DepartmentController.js';
 import ProfessorController from './controllers/ProfessorController.js';
 import PlaceController from './controllers/PlaceController.js';
+import MemberController from './controllers/MemberController.js';
 
 /*---------------------------------`-------------------------
  | 2) Express 객체 생성
@@ -78,6 +79,7 @@ app.use((req, res, next) => {
 /*----------------------------------------------------------
  | 4) Express 객체의 추가 설정(미들웨어등록)
  -----------------------------------------------------------*/
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text()); 
 app.use(bodyParser.json()); 
@@ -117,6 +119,7 @@ app.use(WebHelper());
  app.use(DepartmentController());
  app.use(ProfessorController());
  app.use(PlaceController());
+ app.use(MemberController());
  //DepartmentController 내부에서 에러가 발생하면 코드실행을 중단하고 
  //next(e)메서드로 다음 순서의 미들웨어에게 제어권과 에러객체를 넘긴다.
  //전달받은 err객체를 파라미터로 받아서 sendError함수를 실행시키키.

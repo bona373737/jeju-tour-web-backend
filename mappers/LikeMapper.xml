@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="LikeMapper">
+
+    <select id="selectList">
+        SELECT likeno, memberno, ref_id, ref_type FROM likes 
+        WHERE memberno = #{memberno}
+        <if test="listCount > 0" >
+            LIMIT ${offset}, ${listCount}
+        </if>
+    </select>
+
+    <select id="selectCount">
+        SELECT count(*) FROM likes WHERE memberno=#{memberno};
+    </select>
+
+    <insert id="insertItem">
+        INSERT INTO likes (memberno, ref_id, ref_type)
+        VALUES (#{memberno}, #{ref_id}, #{ref_type});
+    </insert>
+
+    <update id="deleteItem">
+        DELETE FROM likes WHERE likeno = #{likeno};
+    </update>
+
+</mapper>

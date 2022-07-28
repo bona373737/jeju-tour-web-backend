@@ -14,6 +14,7 @@ class LikeService{
     }
 
     async selectList(params){
+        console.log(params)
         let dbcon = null;
         let data = [];
 
@@ -28,28 +29,34 @@ class LikeService{
                 throw new RuntimeException('조회된 데이터가 없습니다.')
             }
 
-            //조회된 like데이터를 활용하여 places,accoms,foods 데이터 조회하기
-            for(const v of result){
-                let mapperName = null;
+            // 조회된 like데이터를 활용하여 places,accoms,foods 데이터 조회하기
+            // for(const v of result){
+            //     let mapperName = null;
+            //     let type = null;
 
-                switch (v.ref_type) {
-                    case "P":
-                        mapperName = "PlaceMapper";
-                        break;
-                    case "A":
-                        mapperName = "AccomMapper";
-                    break;
-                    case "F":
-                        mapperName = "FoodMapper";
-                        break;
-                    default:
-                        break;
-                    }
+            //     switch (v.ref_type) {
+            //         case "P":
+            //             mapperName = "PlaceMapper";
+            //             type = 'place_no';
+
+            //             break;
+            //         case "A":
+            //             mapperName = "AccomMapper";
+            //             type = 'accom_no';
+            //         break;
+            //         case "F":
+            //             mapperName = "FoodMapper";
+            //             type = 'food_no';
+            //             break;
+            //         default:
+            //             break;
+            //         }
                 
-                let tourSql = mybatisMapper.getStatement(mapperName,'selectItem',{foodno:v.ref_id});
-                let [tourResult] = await dbcon.query(tourSql);  
-                data.push(tourResult[0])
-            };
+            //     let tourSql = mybatisMapper.getStatement(mapperName,'selectItem',{type:v.ref_id});
+            //     let [tourResult] = await dbcon.query(tourSql);  
+            //     data.push(tourResult[0])
+            // };
+            data=result;
         } catch (error) {
             throw error;
         } finally {
@@ -97,7 +104,7 @@ class LikeService{
             }
 
             //Likes 테이블에 추가된 데이터 조회
-            sql = mybatisMapper.getStatement('LikeMapper','selectItem',{likeno:insertId})
+            sql = mybatisMapper.getStatement('LikeMapper','selectItem',{like_no:insertId})
             let [result] = await dbcon.query(sql);
 
             if(result.length === 0){

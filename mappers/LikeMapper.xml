@@ -4,24 +4,28 @@
 <mapper namespace="LikeMapper">
 
     <select id="selectList">
-        SELECT likeno, memberno, ref_id, ref_type FROM likes 
-        WHERE memberno = #{memberno}
+        SELECT like_no, member_no, ref_id, ref_type FROM likes 
+        WHERE member_no = #{member_no} 
         <if test="listCount > 0" >
             LIMIT ${offset}, ${listCount}
         </if>
     </select>
 
     <select id="selectCount">
-        SELECT count(*) FROM likes WHERE memberno=#{memberno};
+        SELECT count(*) FROM likes WHERE member_no=#{member_no};
+    </select>
+
+    <select id="selectItem">
+        SELECT  like_no,member_no, ref_id, ref_type FROM likes WHERE like_no = #{like_no};
     </select>
 
     <insert id="insertItem">
-        INSERT INTO likes (memberno, ref_id, ref_type)
-        VALUES (#{memberno}, #{ref_id}, #{ref_type});
+        INSERT INTO likes (member_no, ref_id, ref_type)
+        VALUES (#{member_no}, #{ref_id}, #{ref_type});
     </insert>
 
     <update id="deleteItem">
-        DELETE FROM likes WHERE likeno = #{likeno};
+        DELETE FROM likes WHERE like_no = #{like_no};
     </update>
 
 </mapper>

@@ -6,31 +6,65 @@ class LikeService{
 
     constructor(){
         mybatisMapper.createMapper([
-            './mappers/LikeMapper.xml'
+            './mappers/LikeMapper.xml',
+            './mappers/PlaceMapper.xml',
+            './mappers/AccomMapper.xml',
+            './mappers/FoodMapper.xml'
         ])
     }
 
     async selectList(params){
+        console.log(params)
         let dbcon = null;
-        let data = null;
+        let data = [];
 
         try {
+            //특정 memberno의 like데이터 조회
             dbcon = await DBPool.getConnection();
             let sql = mybatisMapper.getStatement('LikeMapper','selectList',params)
             let [result] = await dbcon.query(sql);
 
+            //특정 memberno의 내저장한 데이터가 없는 경우
             if(result.length === 0){
                 throw new RuntimeException('조회된 데이터가 없습니다.')
             }
+
+            // 조회된 like데이터를 활용하여 places,accoms,foods 데이터 조회하기
+            // for(const v of result){
+            //     let mapperName = null;
+            //     let type = null;
+
+            //     switch (v.ref_type) {
+            //         case "P":
+            //             mapperName = "PlaceMapper";
+            //             type = 'place_no';
+
+            //             break;
+            //         case "A":
+            //             mapperName = "AccomMapper";
+            //             type = 'accom_no';
+            //         break;
+            //         case "F":
+            //             mapperName = "FoodMapper";
+            //             type = 'food_no';
+            //             break;
+            //         default:
+            //             break;
+            //         }
+                
+            //     let tourSql = mybatisMapper.getStatement(mapperName,'selectItem',{type:v.ref_id});
+            //     let [tourResult] = await dbcon.query(tourSql);  
+            //     data.push(tourResult[0])
+            // };
             data=result;
         } catch (error) {
             throw error;
         } finally {
             if(dbcon){dbcon.release()};
         }
-
         return data;
     };
+
 
     async selectCount(params){
         let dbcon = null;
@@ -70,15 +104,14 @@ class LikeService{
             }
 
             //Likes 테이블에 추가된 데이터 조회
-            sql = mybatisMapper.getStatement('LikeMapper','selectItem',{likeno:insertId})
+            sql = mybatisMapper.getStatement('LikeMapper','selectItem',{like_no:insertId})
             let [result] = await dbcon.query(sql);
-
 
             if(result.length === 0){
                 throw new RuntimeException('저장된 데이터를 조회할 수 없습니다.')
             }
 
-            data = result[0];
+            data = result;
         } catch (error) {
             throw error;
         }finally{

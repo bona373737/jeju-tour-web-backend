@@ -33,7 +33,7 @@ class MemberService{
             }
 
             //추가된 데이터(신규등록한 회원정보) 조회_비밀번호를 제외한 데이터를 반환한다.
-            sql = mybatisMapper.getStatement('MemberMapper','selectItem',{memberno:insertId})
+            sql = mybatisMapper.getStatement('MemberMapper','selectItem',{member_no:insertId})
             let [result] = await dbcon.query(sql);
 
             if(result.length === 0){

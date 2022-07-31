@@ -30,32 +30,32 @@ class LikeService{
             }
 
             // 조회된 like데이터를 활용하여 places,accoms,foods 데이터 조회하기
-            // for(const v of result){
-            //     let mapperName = null;
-            //     let type = null;
+            for(const v of result){
+                let mapperName = null;
+                let type = null;
 
-            //     switch (v.ref_type) {
-            //         case "P":
-            //             mapperName = "PlaceMapper";
-            //             type = 'place_no';
+                switch (v.ref_type) {
+                    case "P":
+                        mapperName = "PlaceMapper";
+                        type = 'place_no';
 
-            //             break;
-            //         case "A":
-            //             mapperName = "AccomMapper";
-            //             type = 'accom_no';
-            //         break;
-            //         case "F":
-            //             mapperName = "FoodMapper";
-            //             type = 'food_no';
-            //             break;
-            //         default:
-            //             break;
-            //         }
+                        break;
+                    case "A":
+                        mapperName = "AccomMapper";
+                        type = 'accom_no';
+                    break;
+                    case "F":
+                        mapperName = "FoodMapper";
+                        type = 'food_no';
+                        break;
+                    default:
+                        break;
+                    }
                 
-            //     let tourSql = mybatisMapper.getStatement(mapperName,'selectItem',{type:v.ref_id});
-            //     let [tourResult] = await dbcon.query(tourSql);  
-            //     data.push(tourResult[0])
-            // };
+                let tourSql = mybatisMapper.getStatement(mapperName,'selectItem',{type:v.ref_id});
+                let [tourResult] = await dbcon.query(tourSql);  
+                data.push(tourResult[0])
+            };
             data=result;
         } catch (error) {
             throw error;

@@ -9,7 +9,7 @@ import {pagenation} from "../helper/UtilHelper.js";
 import NoticeService from "../services/NoticeService.js";
 
 const NoticeController = () => {
-    const url = '/Notice';
+    const url = '/notice';
     const router = express.Router();
 
     /** 전체 목록 조회 --> Read(SELECT) */

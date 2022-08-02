@@ -5,16 +5,19 @@
 
     <!-- select 단일행 -->
     <select id="selectItem">
-        SELECT * FROM places WHERE placeno=#{placeno};
+        SELECT place_no, title, introduction, sbst, postcode, address, roadaddress, phoneno, alltag, tag, longitude, latitude, reg_date, edit_date, image, thumbnail
+        FROM places 
+        WHERE place_no = #{place_no}
     </select>
 
     <!-- select 다중행 -->
     <select id="selectList">
-        SELECT * FROM places 
+        SELECT place_no,title, introduction, sbst, postcode, address, roadaddress, phoneno, alltag, tag, longitude, latitude, reg_date, edit_date, image, thumbnail 
+        FROM places 
         <where>
    
         </where>
-        ORDER BY placeno DESC
+        ORDER BY place_no DESC
 
         <if test="listCount>0">
             LIMIT ${offset},${listCount}

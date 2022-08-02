@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="PlaceMapper">
+<mapper namespace="AccomMapper">
 
-    <!-- select 단일행 -->
+ <!-- select 단일행 -->
     <select id="selectItem">
-        SELECT * FROM places WHERE placeno=#{placeno};
+        SELECT accom_no,title, introduction, sbst, postcode, address, roadaddress, phoneno, alltag, tag, longitude, latitude, reg_date, edit_date, image, thumbnail
+        FROM accoms 
+        WHERE accom_no=#{accom_no};
     </select>
 
     <!-- select 다중행 -->
     <select id="selectList">
-        SELECT * FROM places 
+        SELECT accom_no, title, introduction, sbst, postcode, address, roadaddress, phoneno, alltag, tag, longitude, latitude, reg_date, edit_date, image, thumbnail 
+        FROM accoms 
         <where>
    
         </where>
-        ORDER BY placeno DESC
+        ORDER BY accom_no DESC
 
         <if test="listCount>0">
             LIMIT ${offset},${listCount}
@@ -23,7 +26,7 @@
 
     <!-- 데이터 전체개수 -->
     <select id="selectCountAll">
-        SELECT COUNT(*) AS cnt FROM places
+        SELECT COUNT(*) AS cnt FROM accoms
         <where>
 
         </where>

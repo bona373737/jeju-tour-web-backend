@@ -37,20 +37,20 @@ const MemberController =()=>{
             return next(err);
         }
 
-        //비밀번호 암호화
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+        //비밀번호 암호화(프론트에서 암호화한 값 전달받기_백엔드에서 암호화X)
+        // const salt = await bcrypt.genSalt(10);
+        // const hashedPassword = await bcrypt.hash(password, salt);
 
         let json = null;
 
         try {
             json = await MemberService.insertItem({
                 userid: userid,
-                password: hashedPassword,
+                password: password,
                 username: username,
-                birthday: birthday? birthday : null,
+                birthday: birthday,
                 email : email,
-                profile_img : profile_img? profile_img : null
+                profile_img : profile_img,
             });
         } catch (err) {
             return next(err);

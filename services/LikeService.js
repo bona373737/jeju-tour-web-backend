@@ -14,7 +14,6 @@ class LikeService{
     }
 
     async selectList(params){
-        console.log(params)
         let dbcon = null;
         let data = [];
 
@@ -51,12 +50,11 @@ class LikeService{
                     default:
                         break;
                     }
-                
-                let tourSql = mybatisMapper.getStatement(mapperName,'selectItem',{type:v.ref_id});
-                let [tourResult] = await dbcon.query(tourSql);  
+                                                                            //객체의 key를 동적할당할때 표기법
+                let tourSql = mybatisMapper.getStatement(mapperName,'selectItem',{ [type] : Number(v.ref_id)});
+                let [tourResult] = await dbcon.query(tourSql);
                 data.push(tourResult[0])
             };
-            data=result;
         } catch (error) {
             throw error;
         } finally {

@@ -2,5 +2,34 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="FoodMapper">
+    <!-- select 단일행 -->
+    <select id="selectItem">
+        SELECT food_no,title, introduction, sbst, postcode, address, roadaddress, phoneno, alltag, tag, longitude, latitude, reg_date, edit_date, image, thumbnail
+        FROM foods 
+        WHERE food_no=#{food_no};
+    </select>
+
+    <!-- select 다중행 -->
+    <select id="selectList">
+        SELECT food_no,title, introduction, sbst, postcode, address, roadaddress, phoneno, alltag, tag, longitude, latitude, reg_date, edit_date, image, thumbnail 
+        FROM foods 
+        <where>
+   
+        </where>
+        ORDER BY food_no DESC
+
+        <if test="listCount>0">
+            LIMIT ${offset},${listCount}
+        </if>
+    </select>
+
+    <!-- 데이터 전체개수 -->
+    <select id="selectCountAll">
+        SELECT COUNT(*) AS cnt FROM foods
+        <where>
+
+        </where>
+
+    </select>
 
 </mapper>

@@ -22,7 +22,6 @@ const MemberController =()=>{
         const birthday = req.post('birthday');
         const email = req.post('email');
         const profile_img = req.post('profile_img');
-        logger.debug(req);
 
         //유효성 검사
         try {

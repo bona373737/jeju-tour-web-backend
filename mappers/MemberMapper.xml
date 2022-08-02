@@ -1,15 +1,25 @@
+<!-- 
+ * @Filename: MemberMapper.xml
+ * @Description: Member 데이터 처리를 위한 Mapper 파일
+-->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace='MemberMapper'>
-
+    <!-- 데이터 생성을 위한 기능 정의 -->
     <insert id='insertItem'>
         INSERT INTO members (userid, password, username, birthday, email, profile_img)
         VALUES (#{userid}, #{password}, #{username}, #{birthday}, #{email}, #{profile_img});
     </insert>
 
+    <!-- 단일 데이터 조회를 위한 기능 정의 -->
     <select id="selectItem">
-        SELECT userid, username, birthday, email, profile_img FROM members WHERE member_no=#{member_no};
+        SELECT userid, password, username, birthday, email, profile_img
+        FROM members WHERE member_no=#{member_no};
     </select>
 
+    <!-- 로그인 정보와 일치하는 회원 데이터 조회를 위한 기능 정의 -->
+    <select id="loginUser">
+        SELECT * FROM members WHERE userid=#{userid} and password=#{password}
+    </select>
 </mapper>

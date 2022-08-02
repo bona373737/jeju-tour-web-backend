@@ -9,7 +9,7 @@
     </insert>
 
     <select id="selectItem">
-        SELECT userid, username, birthday, email, profile_img FROM members WHERE memberno=#{memberno};
+        SELECT userid, username, birthday, email, profile_img FROM members WHERE member_no=#{member_no};
     </select>
 
 </mapper>

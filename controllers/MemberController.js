@@ -1,18 +1,18 @@
 /**
- * @FileName : MemberController.js
- * @description : 회원가입, 로그인, 프로필수정기능 Controller
- *                회원가입시 입력된 비밀번호를 bcrypt모듈 사용하여 암호화시킨 값을 DB에 저장
+ * @Filename: MemberController.js
+ * @Description: 회원가입, 로그인, 프로필수정기능 Controller
+ *               회원가입 시 입력된 내용을 DB에 저장하고 조회함
  */
-
 import express from 'express';
-import bcrypt from 'bcrypt';
 import regexHelper from '../helper/RegexHelper.js';
 import MemberService from '../services/MemberService.js';
+// import bcrypt from 'bcrypt';
 
 const MemberController =()=>{
     const url = "/members";
     const router = express.Router();
 
+    /** 회원 가입 */
     router.post(url, async(req,res,next)=>{
         //클라이언트 입력값 가져오기
         const userid = req.post('userid');
@@ -59,12 +59,38 @@ const MemberController =()=>{
         res.sendResult({item: json});
     });
     
-     //로그인시 password 확인할 때_bcrypt는 단방향 암호화이기때문에 암호화된 값끼리 비교
+    //로그인시 password 확인할 때_bcrypt는 단방향 암호화이기때문에 암호화된 값끼리 비교
     // const validPassword = await bcrypt.compare(req.body.password, user.password);
     // if (!validPassword) {
     // return res.status(400).send('이메일이나 비밀번호가 올바르지 않습니다.');
     // }
 
+    /** 회원 단일 데이터 조회 */
+    router.get(`${url}/:member_no`, async (req, res, next) => {
+        // 회원 일련번호 받기
+        const member_no = req.get('member_no');
+
+        // 회원 일련번호 유효성 검사
+        try {
+            regexHelper.value(member_no, '회원 일련번호를 입력하세요.');
+            regexHelper.num(member_no, '회원 일련번호는 숫자만 입력 가능합니다.');
+        } catch (err) {
+            return next(err);
+        }
+
+        // 회원 단일 데이터 조회
+        let json = null;
+        
+        try {
+            json = await MemberService.getItem({
+                member_no: member_no
+            });
+        } catch (err) {
+            return next(err);
+        }
+
+        res.sendResult({ item: json });
+    });
 
     return router;
 };

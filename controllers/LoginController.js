@@ -48,6 +48,15 @@ const LoginController = () => {
 
             res.sendResult({ item: json });
         })
+        .delete(url, async (req, res, next) => {
+            try {
+                await req.session.destroy();
+            } catch (e) {
+                return next(e);
+            }
+
+            res.sendResult();
+        })
         // HTML 페이지 로드시 로그인 여부 검사
         .get(url, (req, res, next) => {
             // 세션에 저장된 아이디, 비밀번호 가져오기

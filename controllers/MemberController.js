@@ -68,28 +68,15 @@ const MemberController =()=>{
 
     /** 회원 전체 데이터 조회 */
     router.get(url, async (req, res, next) => {
-        // 페이지 번호 파라미터 (기본값은 1)
-        const page = req.get('page', 1);
-        // 한 페이지에 보여질 목록 수 받기 (기본값은 10)
-        const rows = req.get('rows', 10);
-
         let json = null;
-        let pageInfo = null;
 
         try {
-            // 전체 데이터 수 얻기
-            const totalCount = await MemberService.getCount(params);
-            pageInfo = pagenation(totalCount, page, rows);
-
-            params.offset = pageInfo.offset;
-            params.listCount = pageInfo.listCount;
-
-            json = await MemberService.getList(params);
+            json = await MemberService.getList();
         } catch (err) {
             return next(err);
         }
 
-        res.sendResult({ pagenation: pageInfo, item: json });
+        res.sendResult({ item: json });
     });
 
     /** 회원 단일 데이터 조회 */

@@ -50,14 +50,14 @@ class MemberService{
     }
     
     /** 회원 전체 데이터 조회 */
-    async getList(params) {
+    async getList() {
         let dbcon = null;
         let data = null;
 
         try {
             dbcon = await DBPool.getConnection();
 
-            let sql = mybatisMapper.getStatement("MemberMapper", "selectList", params);
+            let sql = mybatisMapper.getStatement("MemberMapper", "selectList");
             let [result] = await dbcon.query(sql);
             
             if (result.length === 0) {
@@ -119,28 +119,6 @@ class MemberService{
             if (dbcon) { dbcon.release(); }
         }
         return data; 
-    }
-
-    /** 전체 데이터 수를 조회한다 */
-    async getCount(params) {
-        let dbcon = null;
-        let cnt = 0;
-
-        try {
-            dbcon = await DBPool.getConnection();
-
-            let sql = mybatisMapper.getStatement("MemberMapper", "selectCountAll", params);
-            let [result] = await dbcon.query(sql);
-            
-            if (result.length > 0) {
-                cnt = result[0].cnt;
-            }
-        } catch (err) {
-            throw err;
-        } finally {
-            if (dbcon) { dbcon.release(); }
-        }
-        return cnt;
     }
 }
 export default new MemberService;

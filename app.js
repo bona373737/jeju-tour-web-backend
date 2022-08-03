@@ -5,10 +5,9 @@
 import logger from "./helper/LogHelper.js";
 import { myip, urlFormat } from "./helper/UtilHelper.js";
 import WebHelper from "./helper/WebHelper.js";
-
+import DBPool from "./helper/DBPool.js";
 /** 내장모듈 */
 import path, { resolve } from "path";
-
 /** 설치가 필요한 모듈 */
 import dotenv from "dotenv";
 import express from "express";
@@ -22,7 +21,6 @@ import expressSession from "express-session";
 import cors from "cors";
 /** 예외처리 관련 클래스 */
 import PageNotFoundException from "./exceptions/PageNotFoundException.js";
-
 /** URL을 라우팅하는 모듈 참조 */
 // import SetupController from './controllers/SetupController.js';
 // import GetParamsController from './controllers/GetParamsController.js';
@@ -79,6 +77,9 @@ app.use((req, res, next) => {
   next();
 });
 process.on('SIGINT', () => { process.exit();
+});
+process.on('exit', () => { DBPool.close();
+  logger.info('-------- Server is close -------');
 });
 /*----------------------------------------------------------
  | 4) Express 객체의 추가 설정(미들웨어등록)

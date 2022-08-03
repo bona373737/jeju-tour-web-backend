@@ -20,7 +20,7 @@
 
     <!-- 다중 데이터 조회를 위한 기능 정의 (검색 기능 X) -->
     <select id="selectList">
-        SELECT userid, password, username, birthday, email, profile_img FROM members 
+        SELECT member_no, userid, password, username, birthday, email, profile_img FROM members 
         ORDER BY member_no DESC
     </select>
 

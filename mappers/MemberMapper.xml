@@ -18,6 +18,21 @@
         FROM members WHERE member_no=#{member_no};
     </select>
 
+    <!-- 다중 데이터 조회를 위한 기능 정의 (검색 기능 X) -->
+    <select id="selectList">
+        SELECT userid, password, username, birthday, email, profile_img FROM members 
+        ORDER BY member_no DESC
+        <!-- 페이지 구현을 위한 LIMIT절 추가 -->
+        <if test='listCount > 0'>
+            LIMIT ${offset}, ${listCount}
+        </if>
+    </select>
+
+    <!-- 데이터 갯수 조회를 위한 기능 정의 -->
+    <select id="selectCountAll">
+        SELECT COUNT(*) AS cnt FROM members
+    </select>
+
     <!-- 로그인 정보와 일치하는 회원 데이터 조회를 위한 기능 정의 -->
     <select id="loginUser">
         SELECT * FROM members WHERE userid=#{userid} and password=#{password}

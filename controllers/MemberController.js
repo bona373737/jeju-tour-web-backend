@@ -37,7 +37,7 @@ const MemberController =()=>{
             return next(err);
         }
 
-        //비밀번호 암호화(프론트에서 암호화한 값 전달받기_백엔드에서 암호화X)
+        // 비밀번호 암호화(프론트에서 암호화한 값 전달받기_백엔드에서 암호화X)
         // const salt = await bcrypt.genSalt(10);
         // const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -59,11 +59,37 @@ const MemberController =()=>{
         res.sendResult({item: json});
     });
     
-    //로그인시 password 확인할 때_bcrypt는 단방향 암호화이기때문에 암호화된 값끼리 비교
+    // 로그인 시 password 확인할 때_bcrypt는 단방향 암호화이기때문에 암호화된 값끼리 비교
     // const validPassword = await bcrypt.compare(req.body.password, user.password);
     // if (!validPassword) {
     // return res.status(400).send('이메일이나 비밀번호가 올바르지 않습니다.');
     // }
+
+    /** 회원 전체 데이터 조회 */
+    router.get(url, async (req, res, next) => {
+        // 페이지 번호 파라미터 (기본값은 1)
+        const page = req.get('page', 1);
+        // 한 페이지에 보여질 목록 수 받기 (기본값은 10)
+        const rows = req.get('rows', 10);
+
+        let json = null;
+        let pageInfo = null;
+
+        try {
+            // 전체 데이터 수 얻기
+            const totalCount = await MemberService.getCount(params);
+            pageInfo = pagenation(totalCount, page, rows);
+
+            params.offset = pageInfo.offset;
+            params.listCount = pageInfo.listCount;
+
+            json = await MemberService.getList(params);
+        } catch (err) {
+            return next(err);
+        }
+
+        res.sendResult({ pagenation: pageInfo, item: json });
+    });
 
     /** 회원 단일 데이터 조회 */
     router.get(`${url}/:member_no`, async (req, res, next) => {

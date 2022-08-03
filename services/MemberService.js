@@ -14,7 +14,7 @@ class MemberService{
         ]);
     }
 
-    /** 회원가입 */
+    /** 회원 가입 */
     async insertItem(params){
         let dbcon = null;
         let data =null;
@@ -49,6 +49,30 @@ class MemberService{
         return data;
     }
     
+    /** 회원 전체 데이터 조회 */
+    async getList(params) {
+        let dbcon = null;
+        let data = null;
+
+        try {
+            dbcon = await DBPool.getConnection();
+
+            let sql = mybatisMapper.getStatement("MemberMapper", "selectList", params);
+            let [result] = await dbcon.query(sql);
+            
+            if (result.length === 0) {
+                throw new RuntimeException('[회원조회] 조회된 데이터가 없습니다.');
+            }
+
+            data = result;
+        } catch (err) {
+            throw err;
+        } finally {
+            if (dbcon) { dbcon.release(); }
+        }
+        return data;
+    }
+
     /** 회원 단일 데이터 조회 */
     async getItem(params) {
         let dbcon = null;
@@ -95,6 +119,28 @@ class MemberService{
             if (dbcon) { dbcon.release(); }
         }
         return data; 
+    }
+
+    /** 전체 데이터 수를 조회한다 */
+    async getCount(params) {
+        let dbcon = null;
+        let cnt = 0;
+
+        try {
+            dbcon = await DBPool.getConnection();
+
+            let sql = mybatisMapper.getStatement("MemberMapper", "selectCountAll", params);
+            let [result] = await dbcon.query(sql);
+            
+            if (result.length > 0) {
+                cnt = result[0].cnt;
+            }
+        } catch (err) {
+            throw err;
+        } finally {
+            if (dbcon) { dbcon.release(); }
+        }
+        return cnt;
     }
 }
 export default new MemberService;

@@ -40,9 +40,9 @@ import LoginController from "./controllers/LoginController.js";
 /*---------------------------------`-------------------------
  | 2) Express 객체 생성
  -----------------------------------------------------------*/
-dotenv.config({ path: path.join(resolve(), "../config.env") });
-
-const app = express();
+ const app = express();
+ 
+ dotenv.config({path: path.join(path.resolve(), '../config.env')});
 /*-----------------------------------------------------------
  3) 클라이언트의 접속시 초기화
  ------------------------------------------------------------*/

@@ -50,6 +50,43 @@ class MemberService{
 
         return data;
     }
+
+    /**회원정보 수정(프로필이미지 등록, 변경) */
+    async updateItem(params){
+        let dbcon = null;
+        let data =null;
+
+        try {
+            dbcon = await DBPool.getConnection();
+
+            //데이터 추가
+            let sql = mybatisMapper.getStatement('MemberMapper','updateItem',params)
+            let [{insertId, affectedRows}] = await dbcon.query(sql);
+
+            if(affectedRows === 0){
+                throw new RuntimeException('[회원정보수정] 저장된 데이터가 없습니다.')
+            }
+
+            //수정된 데이터 조회
+            sql = mybatisMapper.getStatement('MemberMapper','selectItem',{member_no:insertId})
+            let [result] = await dbcon.query(sql);
+
+            //수정된 데이터를 세션에 저장
+
+            if(result.length === 0){
+                throw new RuntimeException('[회원정보수정] 저장된 데이터를 조회할 수 없습니다.')
+            }
+
+            data = result[0];
+
+        } catch (error) {
+            throw error;
+        }finally{
+            if(dbcon){dbcon.release()};
+        }
+
+        return data;
+    }
     
 }
 export default new MemberService;

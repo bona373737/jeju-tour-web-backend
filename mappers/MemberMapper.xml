@@ -12,4 +12,9 @@
         SELECT userid, username, birthday, email, profile_img FROM members WHERE member_no=#{member_no};
     </select>
 
+    <update id="updateItem">
+        UPDATE members SET profile_img= #{profile_img}
+        WHERE member_no = #{member_no}
+    </update>
+
 </mapper>

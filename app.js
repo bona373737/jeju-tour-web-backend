@@ -40,7 +40,7 @@ import LoginController from "./controllers/LoginController.js";
 /*---------------------------------`-------------------------
  | 2) Express 객체 생성
  -----------------------------------------------------------*/
- dotenv.config({path: path.join(path.resolve(), '../config.env')});
+ dotenv.config({path: path.join(resolve(), '../config.env')});
  
  const app = express();
 /*-----------------------------------------------------------

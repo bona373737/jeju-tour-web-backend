@@ -5,10 +5,9 @@
 import logger from "./helper/LogHelper.js";
 import { myip, urlFormat } from "./helper/UtilHelper.js";
 import WebHelper from "./helper/WebHelper.js";
-
+import DBPool from "./helper/DBPool.js";
 /** 내장모듈 */
-import path, { resolve } from "path";
-
+import { join, resolve } from "path";
 /** 설치가 필요한 모듈 */
 import dotenv from "dotenv";
 import express from "express";
@@ -40,9 +39,9 @@ import LoginController from "./controllers/LoginController.js";
 /*---------------------------------`-------------------------
  | 2) Express 객체 생성
  -----------------------------------------------------------*/
- dotenv.config({path: path.join(resolve(), '../config.env')});
- 
  const app = express();
+
+ dotenv.config({path: join(resolve(), "../config.env")});
 /*-----------------------------------------------------------
  3) 클라이언트의 접속시 초기화
  ------------------------------------------------------------*/
@@ -79,6 +78,11 @@ app.use((req, res, next) => {
 
   next();
 });
+process.on('SIGINT', () => { process.exit();
+});
+process.on('exit', () => { DBPool.close();
+  logger.info('-------- Server is close -------');
+  });
 /*----------------------------------------------------------
  | 4) Express 객체의 추가 설정(미들웨어등록)
  -----------------------------------------------------------*/

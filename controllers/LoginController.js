@@ -3,16 +3,19 @@
  * @Author: 구나래(nrggrnngg@gmail.com)
  * @Description: 로그인 여부 확인하고 로그인/로그아웃 분기처리
  */
-import logger from "../helper/LogHelper.js";
 import express from "express";
+import logger from "../helper/LogHelper.js";
+import regexHelper from '../helper/RegexHelper.js';
+import MemberService from '../services/MemberService.js';
 import BadRequestException from "../exceptions/BadRequestException.js";
 
-export default () => {
+const LoginController = () => {
+    const url = "/session/login";
     const router = express.Router();
 
     router
         // form id="before-login" submit 이벤트 발생 시 post 실행
-        .post("/session/login", async (req, res, next) => {
+        .post(url, async (req, res, next) => {
             // 사용자가 입력한 아이디, 비밀번호
             const id = req.post('userid');
             const pw = req.post('password');
@@ -22,8 +25,8 @@ export default () => {
 
             // 아이디, 비밀번호 유효성 검사
             try { 
-                RegexHelper.value(id, '아이디를 입력하세요.');
-                RegexHelper.value(pw, '비밀번호를 입력하세요.');
+                regexHelper.value(id, '아이디를 입력하세요.');
+                regexHelper.value(pw, '비밀번호를 입력하세요.');
             } catch(e) {
                 return next(err);
             }
@@ -46,7 +49,7 @@ export default () => {
             res.sendResult({ item: json });
         })
         // HTML 페이지 로드시 로그인 여부 검사
-        .get("/session/login", (req, res, next) => {
+        .get(url, (req, res, next) => {
             // 세션에 저장된 아이디, 비밀번호 가져오기
             const id = req.session.userid;
             const pw = req.session.userpw;
@@ -59,4 +62,8 @@ export default () => {
 
             res.sendResult();
         });
+
+    return router;
 };
+
+export default LoginController;

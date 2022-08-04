@@ -27,7 +27,7 @@ const LoginController = () => {
             try { 
                 regexHelper.value(userid, '아이디를 입력하세요.');
                 regexHelper.value(password, '비밀번호를 입력하세요.');
-            } catch(e) {
+            } catch(err) {
                 return next(err);
             }
 
@@ -53,8 +53,8 @@ const LoginController = () => {
         .delete(url, async (req, res, next) => {
             try {
                 await req.session.destroy();
-            } catch (e) {
-                return next(e);
+            } catch (err) {
+                return next(err);
             }
 
             res.sendResult();

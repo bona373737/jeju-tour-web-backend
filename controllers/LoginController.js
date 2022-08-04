@@ -17,21 +17,23 @@ const LoginController = () => {
         // form id="before-login" submit 이벤트 발생 시 post 실행
         .post(url, async (req, res, next) => {
             // 사용자가 입력한 아이디, 비밀번호
-            const id = req.post('userid');
-            const pw = req.post('password');
+            const userid = req.post('userid');
+            const password = req.post('password');
 
-            logger.debug("id=" + id);
-            logger.debug("id=" + pw);
+            logger.debug("id=" + userid);
+            logger.debug("pw=" + password);
 
             // 아이디, 비밀번호 유효성 검사
             try { 
-                regexHelper.value(id, '아이디를 입력하세요.');
-                regexHelper.value(pw, '비밀번호를 입력하세요.');
+                regexHelper.value(userid, '아이디를 입력하세요.');
+                regexHelper.value(password, '비밀번호를 입력하세요.');
             } catch(e) {
                 return next(err);
             }
 
             // 일치하는 회원 정보 조회
+            let id = userid;
+            let pw = password; 
             let json = null;
 
             try {
@@ -43,8 +45,8 @@ const LoginController = () => {
                 return next(err);
             }
 
-            req.session.userid = id;
-            req.session.userpw = pw;
+            req.session.userid = userid;
+            req.session.password = password;
 
             res.sendResult({ item: json });
         })
@@ -61,7 +63,7 @@ const LoginController = () => {
         .get(url, (req, res, next) => {
             // 세션에 저장된 아이디, 비밀번호 가져오기
             const id = req.session.userid;
-            const pw = req.session.userpw;
+            const pw = req.session.password;
 
             // 아이디가 undefined거나 비밀번호가 undefined라면?
             if (id === undefined || pw === undefined) {

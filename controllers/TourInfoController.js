@@ -9,7 +9,6 @@ import regexHelper from '../helper/RegexHelper.js';
 import { initMulter, checkUploadError, createThumbnail, createThumbnailMultiple } from '../helper/FileHelper.js';
 import MultipartException from "../exceptions/MultipartException.js";
 import dayjs from 'dayjs';
-import multer from 'multer';
 
 import placeService from '../services/PlaceService.js';
 // import AccomService from '../services/AccomService.js'
@@ -63,9 +62,9 @@ const TourInfoController =()=>{
                 return next(error);
             }
 
-            console.log(req.body);
             // 업로드된 파일의 경로, 생성된 썸네일 파일의 경로를 DB에 저장
             let json = null;
+            // console.log(req.body);
             const tourinfo = req.post("tourinfo")
             const title = req.post('title');
             const introduction = req.post("introduction");
@@ -81,8 +80,23 @@ const TourInfoController =()=>{
             const image = req.file.path;
             const thumbnail = req.file.thumbnail["480w"];
 
+            let whichService = null;
+            switch (tourinfo) {
+                case 'places':
+                    whichService = placeService
+                    break;
+                case 'accoms':
+                    whichService = accomService
+                    break;
+                case 'foods':
+                    whichService = foodService
+                    break;
+                default:
+                    break;
+            }
+
             try {
-                json = await placeService.insertItem({
+                json = await whichService.insertItem({
                     title: title,
                     introduction: introduction,
                     sbst : sbst,

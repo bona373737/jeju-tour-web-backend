@@ -32,4 +32,10 @@
         </where>
 
     </select>
+
+    <!-- 여행지 정보 추가 -->
+    <insert id='insertItem'>
+    INSERT INTO places (title,introduction,sbst,postcode,address,roadaddress,phoneno, alltag, tag, longitude,latitude, reg_date, edit_date, image, thumbnail)
+    VALUES (#{title}, #{introduction}, #{sbst}, #{postcode}, #{address}, #{roadaddress}, #{phoneno}, #{alltag}, #{tag}, #{longitude}, #{latitude}, #{reg_date}, #{edit_date}, #{image}, #{thumbnail});
+    </insert>
 </mapper>

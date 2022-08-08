@@ -1,9 +1,8 @@
 /**
- * @FileName : MemberController.js
- * @description : 회원가입, 로그인, 프로필수정기능 Controller
- *                회원가입시 입력된 비밀번호를 bcrypt모듈 사용하여 암호화시킨 값을 DB에 저장
+ * @Filename: MemberController.js
+ * @Description: 회원가입, 로그인, 프로필수정기능 Controller
+ *               회원가입 시 입력된 내용을 DB에 저장하고 조회함
  */
-
 import express from 'express';
 import logger from '../helper/LogHelper.js';
 // import { initMulter, checkUploadError, createThumbnail, createThumbnailMultiple } from '../helper/FileHelper.js';
@@ -21,7 +20,7 @@ const MemberController =()=>{
     const router = express.Router();
     const now = dayjs()
 
-    /**회원가입 기능 */
+    /** 회원 가입 */
     router.post(url, async(req,res,next)=>{
         console.log(req.sessionID);
 
@@ -48,7 +47,7 @@ const MemberController =()=>{
             return next(err);
         }
 
-        //비밀번호 암호화(프론트에서 암호화한 값 전달받기_백엔드에서 암호화X)
+        // 비밀번호 암호화(프론트에서 암호화한 값 전달받기_백엔드에서 암호화X)
         // const salt = await bcrypt.genSalt(10);
         // const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -72,11 +71,51 @@ const MemberController =()=>{
         res.sendResult({item: json});
     });
     
-     //로그인시 password 확인할 때_bcrypt는 단방향 암호화이기때문에 암호화된 값끼리 비교
+    // 로그인 시 password 확인할 때_bcrypt는 단방향 암호화이기때문에 암호화된 값끼리 비교
     // const validPassword = await bcrypt.compare(req.body.password, user.password);
     // if (!validPassword) {
     // return res.status(400).send('이메일이나 비밀번호가 올바르지 않습니다.');
     // }
+
+    /** 회원 전체 데이터 조회 */
+    router.get(url, async (req, res, next) => {
+        let json = null;
+
+        try {
+            json = await MemberService.getList();
+        } catch (err) {
+            return next(err);
+        }
+
+        res.sendResult({ item: json });
+    });
+
+    /** 회원 단일 데이터 조회 */
+    router.get(`${url}/:member_no`, async (req, res, next) => {
+        // 회원 일련번호 받기
+        const member_no = req.get('member_no');
+
+        // 회원 일련번호 유효성 검사
+        try {
+            regexHelper.value(member_no, '회원 일련번호를 입력하세요.');
+            regexHelper.num(member_no, '회원 일련번호는 숫자만 입력 가능합니다.');
+        } catch (err) {
+            return next(err);
+        }
+
+        // 회원 단일 데이터 조회
+        let json = null;
+        
+        try {
+            json = await MemberService.getItem({
+                member_no: member_no
+            });
+        } catch (err) {
+            return next(err);
+        }
+
+        res.sendResult({ item: json });
+    });
 
     return router;
 };

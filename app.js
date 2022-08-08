@@ -5,10 +5,9 @@
 import logger from "./helper/LogHelper.js";
 import { myip, urlFormat } from "./helper/UtilHelper.js";
 import WebHelper from "./helper/WebHelper.js";
-
+import DBPool from "./helper/DBPool.js";
 /** 내장모듈 */
-import path, { resolve } from "path";
-
+import { join, resolve } from "path";
 /** 설치가 필요한 모듈 */
 import dotenv from "dotenv";
 import express from "express";
@@ -20,6 +19,7 @@ import methodOverride from "method-override";
 import cookieParser from "cookie-parser";
 import expressSession from "express-session";
 import cors from "cors";
+
 /** 예외처리 관련 클래스 */
 import PageNotFoundException from "./exceptions/PageNotFoundException.js";
 
@@ -34,14 +34,14 @@ import PageNotFoundException from "./exceptions/PageNotFoundException.js";
 import PlaceController from "./controllers/PlaceController.js";
 import MemberController from "./controllers/MemberController.js";
 import LikeController from "./controllers/LikeController.js";
-
+import NoticeController from "./controllers/NoticeController.js";
+import LoginController from "./controllers/LoginController.js";
 /*---------------------------------`-------------------------
  | 2) Express 객체 생성
  -----------------------------------------------------------*/
-dotenv.config({ path: path.join(resolve(), "../config.env") });
+ const app = express();
 
-const app = express();
-
+ dotenv.config({path: join(resolve(), "../config.env")});
 /*-----------------------------------------------------------
  3) 클라이언트의 접속시 초기화
  ------------------------------------------------------------*/
@@ -78,7 +78,11 @@ app.use((req, res, next) => {
 
   next();
 });
-
+process.on('SIGINT', () => { process.exit();
+});
+process.on('exit', () => { DBPool.close();
+  logger.info('-------- Server is close -------');
+  });
 /*----------------------------------------------------------
  | 4) Express 객체의 추가 설정(미들웨어등록)
  -----------------------------------------------------------*/
@@ -102,13 +106,12 @@ app.use(
   })
 );
 
-app.use(serveFavicon(process.env.FAVICON_PATH));
 app.use("/", serveStatic(process.env.PUBLIC_PATH));
 app.use(process.env.UPLOAD_URL, serveStatic(process.env.UPLOAD_DIR));
 app.use(process.env.THUMB_URL, serveStatic(process.env.THUMB_DIR));
+app.use(serveFavicon(process.env.FAVICON_PATH));
 
 app.use(WebHelper());
-
 /*----------------------------------------------------------
  | 5) 각 URL별 백엔드 기능 정의(라우팅처리)
       이부분은 미들웨어 순서대로 실행된다기 보다는 맞는 url에 매칭되는 controller가 실행된다 
@@ -123,6 +126,8 @@ app.use(WebHelper());
 app.use(PlaceController());
 app.use(MemberController());
 app.use(LikeController());
+app.use(NoticeController());
+app.use(LoginController());
 // Controller 내부에서 에러가 발생하면 코드실행을 중단하고
 // next(e)메서드로 다음 순서의 미들웨어에게 제어권과 에러객체를 넘긴다.
 // 전달받은 err객체를 파라미터로 받아서 sendError함수를 실행시키키.

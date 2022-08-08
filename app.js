@@ -36,6 +36,8 @@ import MemberController from "./controllers/MemberController.js";
 import LikeController from "./controllers/LikeController.js";
 import NoticeController from "./controllers/NoticeController.js";
 import LoginController from "./controllers/LoginController.js";
+import TourInfoController from './controllers/TourInfoController.js';
+
 /*---------------------------------`-------------------------
  | 2) Express 객체 생성
  -----------------------------------------------------------*/
@@ -128,6 +130,7 @@ app.use(MemberController());
 app.use(LikeController());
 app.use(NoticeController());
 app.use(LoginController());
+app.use(TourInfoController());
 // Controller 내부에서 에러가 발생하면 코드실행을 중단하고
 // next(e)메서드로 다음 순서의 미들웨어에게 제어권과 에러객체를 넘긴다.
 // 전달받은 err객체를 파라미터로 받아서 sendError함수를 실행시키키.

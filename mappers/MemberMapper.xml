@@ -8,15 +8,19 @@
 <mapper namespace='MemberMapper'>
     <!-- 데이터 생성을 위한 기능 정의 -->
     <insert id='insertItem'>
-        INSERT INTO members (userid, password, username, birthday, email, profile_img)
-        VALUES (#{userid}, #{password}, #{username}, #{birthday}, #{email}, #{profile_img});
+        INSERT INTO members (userid, password, username, birthday, email, profile_img, reg_date, edit_date)
+        VALUES (#{userid}, #{password}, #{username}, #{birthday}, #{email}, #{profile_img}, #{reg_date}, #{edit_date});
     </insert>
 
     <!-- 단일 데이터 조회를 위한 기능 정의 -->
     <select id="selectItem">
-        SELECT userid, password, username, birthday, email, profile_img
-        FROM members WHERE member_no=#{member_no};
+        SELECT userid, username, birthday, email, profile_img, reg_date, edit_date FROM members WHERE member_no=#{member_no};
     </select>
+
+    <update id="updateItem">
+        UPDATE members SET profile_img= #{profile_img}
+        WHERE member_no = #{member_no}
+    </update>
 
     <!-- 다중 데이터 조회를 위한 기능 정의 (검색 기능 X) -->
     <select id="selectList">

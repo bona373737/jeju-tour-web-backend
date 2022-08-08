@@ -26,7 +26,6 @@ const LikeController = () => {
             params.member_no = Number(member_no);
         }
 
-
         // 데이터 조회
         let json = null;
         let pageInfo = null;

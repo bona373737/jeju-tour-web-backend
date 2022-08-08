@@ -1,4 +1,5 @@
 import express from 'express';
+import { Cookie } from 'express-session';
 import regexHelper from '../helper/RegexHelper.js';
 import {pagenation} from '../helper/UtilHelper.js';
 import placeService from '../services/PlaceService.js';
@@ -8,6 +9,14 @@ const PlaceController =()=>{
     const router = express.Router();
 
     router.get(url, async(req,res,next)=>{
+                console.log(req.sessionID)
+                req.session.userid = "id"
+                req.session.password = 'password'
+                req.session.email = 'email'
+                req.session.birthday = 'birthday'
+                req.session.image = 'image'
+                req.session.thumbnail ='thumbnail'
+
                const query = req.get('query');
                const page = req.get('page', 1);
                const rows = req.get('rows', 10);
@@ -30,6 +39,8 @@ const PlaceController =()=>{
                } catch (err) {
                    return next(err);
                }
+
+               
        
                res.sendResult({pagenation: pageInfo, item: json});
     });

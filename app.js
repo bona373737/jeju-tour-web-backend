@@ -82,7 +82,7 @@ app.use((req, res, next) => {
 /*----------------------------------------------------------
  | 4) Express 객체의 추가 설정(미들웨어등록)
  -----------------------------------------------------------*/
-app.use(cors());
+app.use(cors({credentials: true, origin: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text());
 app.use(bodyParser.json());

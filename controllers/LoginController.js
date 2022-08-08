@@ -9,7 +9,7 @@ import regexHelper from '../helper/RegexHelper.js';
 import MemberService from '../services/MemberService.js';
 import BadRequestException from "../exceptions/BadRequestException.js";
 
-import cryptojs from 'cryptojs';
+import cryptojs from 'crypto-js';
 import bcrypt from 'bcrypt';
 
 const LoginController = () => {

@@ -9,6 +9,9 @@ import regexHelper from '../helper/RegexHelper.js';
 import MemberService from '../services/MemberService.js';
 import BadRequestException from "../exceptions/BadRequestException.js";
 
+import cryptojs from 'cryptojs';
+import bcrypt from 'bcrypt';
+
 const LoginController = () => {
     const url = "/session/login";
     const router = express.Router();
@@ -17,8 +20,8 @@ const LoginController = () => {
         // form id="before-login" submit 이벤트 발생 시 post 실행
         .post(url, async (req, res, next) => {
             // 사용자가 입력한 아이디, 비밀번호
-            const userid = req.post('userid');
-            const password = req.post('password');
+            let userid = req.post('userid');
+            let password = req.post('password');
 
             logger.debug("id=" + userid);
             logger.debug("pw=" + password);
@@ -31,18 +34,26 @@ const LoginController = () => {
                 return next(err);
             }
 
-            // 일치하는 회원 정보 조회
-            let id = userid;
-            let pw = password; 
-            let json = null;
+            // AES알고리즘 사용 --> 프론트에서 전달받은 암호값 복호화 ( 복구 키 필요 )
+            const secretKey = 'secret key';
+            const bytes = cryptojs.AES.decrypt(password, secretKey);
+            // 인코딩, 문자열로 변환, JSON 변환
+            const decrypted = bytes.toString(cryptojs.enc.Utf8);
 
+            let json = null;
             try {
                 json = await MemberService.getLoginUser({
-                    userid: id,
-                    password: pw
+                    userid: userid,
                 });
             } catch (err) {
                 return next(err);
+            }
+            logger.debug("json=%o", json);
+
+            // 비밀번호 비교 (복호화한 원본 입력값과 DB에 있는 해시 비밀번호와 비교)
+            let checkPassword = bcrypt.compareSync(decrypted, json.password);
+            if (checkPassword) {
+                password = json.password;
             }
 
             req.session.userid = userid;

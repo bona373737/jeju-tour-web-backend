@@ -4,12 +4,12 @@
 <mapper namespace='MemberMapper'>
 
     <insert id='insertItem'>
-        INSERT INTO members (userid, password, username, birthday, email, profile_img)
-        VALUES (#{userid}, #{password}, #{username}, #{birthday}, #{email}, #{profile_img});
+        INSERT INTO members (userid, password, username, birthday, email, profile_img, reg_date, edit_date)
+        VALUES (#{userid}, #{password}, #{username}, #{birthday}, #{email}, #{profile_img}, #{reg_date}, #{edit_date});
     </insert>
 
     <select id="selectItem">
-        SELECT userid, username, birthday, email, profile_img FROM members WHERE member_no=#{member_no};
+        SELECT userid, username, birthday, email, profile_img, reg_date, edit_date FROM members WHERE member_no=#{member_no};
     </select>
 
     <update id="updateItem">

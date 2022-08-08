@@ -6,19 +6,25 @@
 
 import express from 'express';
 import logger from '../helper/LogHelper.js';
-import { initMulter, checkUploadError, createThumbnail, createThumbnailMultiple } from '../helper/FileHelper.js';
+// import { initMulter, checkUploadError, createThumbnail, createThumbnailMultiple } from '../helper/FileHelper.js';
 import MultipartException from "../exceptions/MultipartException.js";
+import dayjs from 'dayjs';
+import formidable from 'formidable'
 
 import regexHelper from '../helper/RegexHelper.js';
 import MemberService from '../services/MemberService.js';
+import multer from 'multer';
 
 
 const MemberController =()=>{
     const url = "/members";
     const router = express.Router();
+    const now = dayjs()
 
     /**회원가입 기능 */
     router.post(url, async(req,res,next)=>{
+        console.log(req.sessionID);
+
         //클라이언트 입력값 가져오기
         const userid = req.post('userid');
         const password = req.post('password');
@@ -56,6 +62,8 @@ const MemberController =()=>{
                 birthday: birthday,
                 email : email,
                 profile_img : profile_img,
+                reg_date : now.format("YYYY-MM-DD HH:mm:ss"),
+                edit_date : now.format("YYYY-MM-DD HH:mm:ss")
             });
         } catch (err) {
             return next(err);
@@ -69,49 +77,6 @@ const MemberController =()=>{
     // if (!validPassword) {
     // return res.status(400).send('이메일이나 비밀번호가 올바르지 않습니다.');
     // }
-
-    /** 회원정보 수정, 프로필 이미지 등록,수정 */
-    router.patch(url, async(req, res, next) => {
-        let uploadedFile = null;
-
-        /**서버에 사진업로드 */
-        const upload = initMulter().single("myphoto");
-        upload(req, res, (err) => {
-            // 에러가 존재한다면 예외처리 수행
-            if (err) {
-                return next(new MultipartException(err));
-            }
-
-            // 업로드 결과가 성공이라면 썸네일 생성 함수를 호출한다.
-            try {
-                createThumbnail(req.file);
-            } catch (error) {
-                return next(error);
-            }
-
-            uploadedFile = req.file;
-        });
-
-
-        /**서버에 업로드된 사진파일의 경로를 DB에 저장 */
-        try {
-            json = await MemberService.updateItem({
-                // userid:userid,
-                // username:username,
-                // birthday:birthday,
-                // email:email,
-                member_no:1,
-                profile_img:`../_files${uploadedFile.thumbnail["480w"]}`
-            });
-        } catch (err) {
-            return next(err);
-        }
-
-        res.sendResult({item: json});
-
-        // 준비한 결과값 변수를 활용하여 클라이언트에게 응답을 보냄
-        // res.sendResult(req.file);
-    });
 
     return router;
 };

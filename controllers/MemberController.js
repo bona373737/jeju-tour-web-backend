@@ -8,11 +8,15 @@ import logger from '../helper/LogHelper.js';
 // import { initMulter, checkUploadError, createThumbnail, createThumbnailMultiple } from '../helper/FileHelper.js';
 import MultipartException from "../exceptions/MultipartException.js";
 import dayjs from 'dayjs';
-import formidable from 'formidable'
+// import formidable from 'formidable'
 
 import regexHelper from '../helper/RegexHelper.js';
 import MemberService from '../services/MemberService.js';
 import multer from 'multer';
+
+import cryptojs from 'crypto-js';
+import bcrypt from 'bcrypt';
+
 
 
 const MemberController =()=>{
@@ -22,11 +26,11 @@ const MemberController =()=>{
 
     /** 회원 가입 */
     router.post(url, async(req,res,next)=>{
-        console.log(req.sessionID);
+        // console.log(req.sessionID);
 
         //클라이언트 입력값 가져오기
         const userid = req.post('userid');
-        const password = req.post('password');
+        let password = req.post('password');
         const passwordCheck = req.post('passwordCheck');
         const username = req.post('username');
         const birthday = req.post('birthday');
@@ -47,9 +51,16 @@ const MemberController =()=>{
             return next(err);
         }
 
-        // 비밀번호 암호화(프론트에서 암호화한 값 전달받기_백엔드에서 암호화X)
-        // const salt = await bcrypt.genSalt(10);
-        // const hashedPassword = await bcrypt.hash(password, salt);
+        // AES알고리즘 사용 복호화 ( 복구 키 필요 )
+        const secretKey =  'secret key';
+        const bytes = cryptojs.AES.decrypt(password, secretKey);
+        // 인코딩, 문자열로 변환, JSON 변환
+        const decrypted = bytes.toString(cryptojs.enc.Utf8);
+
+        // 비밀번호 암호화(프론트에서 암호화한 값 전달받아 복호화 한뒤 단방향암호화 하여 DB에 저장)
+        const salt = await bcrypt.genSalt(10);
+        password = await bcrypt.hash(decrypted, salt);
+
 
         let json = null;
 
@@ -70,12 +81,6 @@ const MemberController =()=>{
 
         res.sendResult({item: json});
     });
-    
-    // 로그인 시 password 확인할 때_bcrypt는 단방향 암호화이기때문에 암호화된 값끼리 비교
-    // const validPassword = await bcrypt.compare(req.body.password, user.password);
-    // if (!validPassword) {
-    // return res.status(400).send('이메일이나 비밀번호가 올바르지 않습니다.');
-    // }
 
     /** 회원 전체 데이터 조회 */
     router.get(url, async (req, res, next) => {

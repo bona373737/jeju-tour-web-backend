@@ -54,15 +54,18 @@ const LoginController = () => {
             // 비밀번호 비교 (복호화한 원본 입력값과 DB에 있는 해시 비밀번호와 비교)
             logger.debug('decrypted ------------------------------------------------');
             logger.debug(decrypted);
-            const check = await bcrypt.compare(decrypted, password);
+            const checkPassword = await bcrypt.compare(decrypted, password);
 
-            if (check) { // 로그인 성공
-                req.session.userid = userid;
-                req.session.password = password;
-                res.redirect('/');
-            } else { // 로그인 실패
-                res.redirect('/login');
+            logger.debug('checkPassword ------------------------------------------------');
+            logger.debug(checkPassword);
+
+            if (!checkPassword) { // password 불일치 --> 로그인 실패
+                const error = new BadRequestException('아이디나 비밀번호를 확인하세요.');
+                return next(error);
             }
+
+            req.session.userid = userid;
+            req.session.password = password;
 
             res.sendResult();
         })

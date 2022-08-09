@@ -58,7 +58,7 @@ const LoginController = () => {
             }
 
             logger.debug('--- req.session ---');
-            logger.debug(req.session);
+            logger.debug(JSON.stringify(req.session));
             req.session.userid = userid;
             req.session.password = password;
 

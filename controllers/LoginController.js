@@ -17,10 +17,10 @@ const LoginController = () => {
     const router = express.Router();
 
     router
-        // form id="before-login" submit 이벤트 발생 시 post 실행
+        // form onSubmit={loginUser} 이벤트 발생 시 post 실행
         .post(url, async (req, res, next) => {
             // 사용자가 입력한 아이디, 비밀번호
-            let userid = req.post('userid');
+            const userid = req.post('userid');
             let password = req.post('password');
 
             logger.debug("id=" + userid);
@@ -41,6 +41,7 @@ const LoginController = () => {
             const decrypted = bytes.toString(cryptojs.enc.Utf8);
 
             let json = null;
+
             try {
                 json = await MemberService.getLoginUser({
                     userid: userid,
@@ -48,12 +49,13 @@ const LoginController = () => {
             } catch (err) {
                 return next(err);
             }
-            logger.debug("json=%o", json);
+
+            logger.debug(json);
 
             // 비밀번호 비교 (복호화한 원본 입력값과 DB에 있는 해시 비밀번호와 비교)
-            let checkPassword = bcrypt.compareSync(decrypted, json.password);
-            if (checkPassword) {
-                password = json.password;
+            const check = await bcrypt.compare(decrypted, json.item.password);
+            if (check) {
+                password = json.item.password;
             }
 
             req.session.userid = userid;

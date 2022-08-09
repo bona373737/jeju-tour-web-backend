@@ -30,6 +30,6 @@
 
     <!-- 로그인 정보와 일치하는 회원 데이터 조회를 위한 기능 정의 -->
     <select id="loginUser">
-        SELECT password FROM members WHERE userid=#{userid}
+        SELECT * FROM members WHERE userid=#{userid}
     </select>
 </mapper>

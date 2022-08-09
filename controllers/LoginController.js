@@ -23,9 +23,6 @@ const LoginController = () => {
             const userid = req.post('userid');
             let password = req.post('password');
 
-            logger.debug("id=" + userid);
-            logger.debug("pw=" + password);
-
             // 아이디, 비밀번호 유효성 검사
             try { 
                 regexHelper.value(userid, '아이디를 입력하세요.');
@@ -37,31 +34,35 @@ const LoginController = () => {
             // AES알고리즘 사용 --> 프론트에서 전달받은 암호값 복호화 ( 복구 키 필요 )
             const secretKey = 'secret key';
             const bytes = cryptojs.AES.decrypt(password, secretKey);
+            logger.debug('bytes -----');
+            logger.debug(bytes);
             // 인코딩, 문자열로 변환, JSON 변환
             const decrypted = bytes.toString(cryptojs.enc.Utf8);
-
-            let json = null;
+            logger.debug('decrypted -----');
+            logger.debug(decrypted);
 
             try {
-                json = await MemberService.getLoginUser({
+                password = await MemberService.getLoginUser({
                     userid: userid,
                 });
             } catch (err) {
                 return next(err);
             }
-
-            logger.debug(json);
+            logger.debug('password try&catch -----');
+            logger.debug(password);
 
             // 비밀번호 비교 (복호화한 원본 입력값과 DB에 있는 해시 비밀번호와 비교)
-            const check = await bcrypt.compare(decrypted, json.item.password);
+            const check = await bcrypt.compare(decrypted, password);
             if (check) {
-                password = json.item.password;
+                password = password;
+                logger.debug('password bcrypt -----');
+                logger.debug(password);
             }
 
             req.session.userid = userid;
             req.session.password = password;
 
-            res.sendResult({ item: json });
+            res.sendResult();
         })
         .delete(url, async (req, res, next) => {
             try {

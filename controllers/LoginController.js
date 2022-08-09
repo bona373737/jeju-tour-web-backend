@@ -13,7 +13,7 @@ import cryptojs from 'crypto-js';
 import bcrypt from 'bcrypt';
 
 const LoginController = () => {
-    const url = "/session/login";
+    const url = "/login";
     const router = express.Router();
 
     router
@@ -48,22 +48,17 @@ const LoginController = () => {
             }
 
             const { password } = json;
-            logger.debug('password ------------------------------------------------');
-            logger.debug(password);
 
             // 비밀번호 비교 (복호화한 원본 입력값과 DB에 있는 해시 비밀번호와 비교)
-            logger.debug('decrypted ------------------------------------------------');
-            logger.debug(decrypted);
             const checkPassword = await bcrypt.compare(decrypted, password);
-
-            logger.debug('checkPassword ------------------------------------------------');
-            logger.debug(checkPassword);
 
             if (!checkPassword) { // password 불일치 --> 로그인 실패
                 const error = new BadRequestException('아이디나 비밀번호를 확인하세요.');
                 return next(error);
             }
 
+            logger.debug('--- req.session ---');
+            logger.debug(req.session);
             req.session.userid = userid;
             req.session.password = password;
 

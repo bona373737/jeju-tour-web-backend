@@ -17,50 +17,52 @@ const LoginController = () => {
     const router = express.Router();
 
     router
-        // form onSubmit={loginUser} 이벤트 발생 시 post 실행
+        // Login.js `onSubmit={loginUser}` 이벤트 발생 시 post 실행
         .post(url, async (req, res, next) => {
             // 사용자가 입력한 아이디, 비밀번호
             const userid = req.post('userid');
-            let password = req.post('password');
+            const userpw = req.post('password');
 
             // 아이디, 비밀번호 유효성 검사
             try { 
-                regexHelper.value(userid, '아이디를 입력하세요.');
-                regexHelper.value(password, '비밀번호를 입력하세요.');
+                regexHelper.value(userid, '아이디가 존재하지 않습니다.');
+                regexHelper.value(userpw, '비밀번호가 존재하지 않습니다.');
             } catch(err) {
                 return next(err);
             }
 
             // AES알고리즘 사용 --> 프론트에서 전달받은 암호값 복호화 ( 복구 키 필요 )
             const secretKey = 'secret key';
-            const bytes = cryptojs.AES.decrypt(password, secretKey);
-            logger.debug('bytes -----');
-            logger.debug(bytes);
+            const bytes = cryptojs.AES.decrypt(userpw, secretKey);
             // 인코딩, 문자열로 변환, JSON 변환
             const decrypted = bytes.toString(cryptojs.enc.Utf8);
-            logger.debug('decrypted -----');
-            logger.debug(decrypted);
+
+            let json = null;
 
             try {
-                password = await MemberService.getLoginUser({
+                json = await MemberService.getLoginUser({
                     userid: userid,
                 });
             } catch (err) {
                 return next(err);
             }
-            logger.debug('password try&catch -----');
+
+            const { password } = json;
+            logger.debug('password ------------------------------------------------');
             logger.debug(password);
 
             // 비밀번호 비교 (복호화한 원본 입력값과 DB에 있는 해시 비밀번호와 비교)
+            logger.debug('decrypted ------------------------------------------------');
+            logger.debug(decrypted);
             const check = await bcrypt.compare(decrypted, password);
-            if (check) {
-                password = password;
-                logger.debug('password bcrypt -----');
-                logger.debug(password);
-            }
 
-            req.session.userid = userid;
-            req.session.password = password;
+            if (check) { // 로그인 성공
+                req.session.userid = userid;
+                req.session.password = password;
+                res.redirect('/');
+            } else { // 로그인 실패
+                res.redirect('/login');
+            }
 
             res.sendResult();
         })

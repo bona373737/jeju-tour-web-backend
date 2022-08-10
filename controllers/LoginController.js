@@ -34,12 +34,14 @@ const LoginController = () => {
             // AES알고리즘 사용 --> 프론트에서 전달받은 암호값 복호화 ( 복구 키 필요 )
             const secretKey = 'secret key';
             const bytes = cryptojs.AES.decrypt(userpw, secretKey);
-            // 인코딩, 문자열로 변환, JSON 변환
+            // 인코딩, 문자열로 변환, JSON 변환 --> 사용자 입력값 도출
             const decrypted = bytes.toString(cryptojs.enc.Utf8);
 
+            // 아이디가 일치하는 회원정보 저장할 변수
             let json = null;
 
             try {
+                // 회원정보 DB에서 가져오기
                 json = await MemberService.getLoginUser({
                     userid: userid,
                 });
@@ -47,22 +49,26 @@ const LoginController = () => {
                 return next(err);
             }
 
+            // 가져온 회원정보에서 저장된 password값만 추출
             const { password } = json;
 
-            // 비밀번호 비교 (복호화한 원본 입력값과 DB에 있는 해시 비밀번호와 비교)
+            // 비밀번호 비교 (복호화된 원본 비밀번호와 DB에 있는 해시 비밀번호와 비교)
             const checkPassword = await bcrypt.compare(decrypted, password);
+            // 비밀번호 체크 후 보내줄 회원정보값
+            let memberInfo = null;
 
-            if (!checkPassword) { // password 불일치 --> 로그인 실패
+            if (checkPassword) { // password 일치 --> 로그인 성공
+                req.session.userid = userid;
+                req.session.password = password;
+                logger.debug('----- req.session json -----');
+                logger.debug(JSON.stringify(req.session));
+                memberInfo = json;
+            } else { // password 불일치 --> 로그인 실패
                 const error = new BadRequestException('아이디나 비밀번호를 확인하세요.');
                 return next(error);
             }
 
-            logger.debug('--- req.session ---');
-            logger.debug(JSON.stringify(req.session));
-            req.session.userid = userid;
-            req.session.password = password;
-
-            res.sendResult();
+            res.sendResult({ item: memberInfo });
         })
         .delete(url, async (req, res, next) => {
             try {

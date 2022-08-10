@@ -36,17 +36,21 @@ const LoginController = () => {
             let pw = password; 
             let json = null;
 
-            try {
-                json = await MemberService.getLoginUser({
-                    userid: id,
-                    password: pw
-                });
-            } catch (err) {
-                return next(err);
-            }
+            // try {
+            //     json = await MemberService.getLoginUser({
+            //         userid: id,
+            //         password: pw
+            //     });
+            // } catch (err) {
+            //     return next(err);
+            // }
 
+            console.log(req.sessionID);
             req.session.userid = userid;
             req.session.password = password;
+            req.session.username = "test2";
+            req.session.birthday = "1999-02-02";
+            req.session.email = "test2@gmail.com";
 
             res.sendResult({ item: json });
         })

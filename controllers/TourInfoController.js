@@ -4,7 +4,7 @@
  */
 
 import express from 'express';
-import formidable from 'formidable'
+// import formidable from 'formidable'
 import regexHelper from '../helper/RegexHelper.js';
 import { initMulter, checkUploadError, createThumbnail, createThumbnailMultiple } from '../helper/FileHelper.js';
 import MultipartException from "../exceptions/MultipartException.js";

@@ -9,50 +9,66 @@ import regexHelper from '../helper/RegexHelper.js';
 import MemberService from '../services/MemberService.js';
 import BadRequestException from "../exceptions/BadRequestException.js";
 
+import cryptojs from 'crypto-js';
+import bcrypt from 'bcrypt';
+
 const LoginController = () => {
-    const url = "/session/login";
+    const url = "/login";
     const router = express.Router();
 
     router
-        // form id="before-login" submit 이벤트 발생 시 post 실행
+        // Login.js `onSubmit={loginUser}` 이벤트 발생 시 post 실행
         .post(url, async (req, res, next) => {
             // 사용자가 입력한 아이디, 비밀번호
             const userid = req.post('userid');
-            const password = req.post('password');
-
-            logger.debug("id=" + userid);
-            logger.debug("pw=" + password);
+            const userpw = req.post('password');
 
             // 아이디, 비밀번호 유효성 검사
             try { 
-                regexHelper.value(userid, '아이디를 입력하세요.');
-                regexHelper.value(password, '비밀번호를 입력하세요.');
+                regexHelper.value(userid, '아이디가 존재하지 않습니다.');
+                regexHelper.value(userpw, '비밀번호가 존재하지 않습니다.');
             } catch(err) {
                 return next(err);
             }
 
-            // 일치하는 회원 정보 조회
-            let id = userid;
-            let pw = password; 
+            // AES알고리즘 사용 --> 프론트에서 전달받은 암호값 복호화 ( 복구 키 필요 )
+            const secretKey = 'secret key';
+            const bytes = cryptojs.AES.decrypt(userpw, secretKey);
+            // 인코딩, 문자열로 변환, JSON 변환 --> 사용자 입력값 도출
+            const decrypted = bytes.toString(cryptojs.enc.Utf8);
+
+            // 아이디가 일치하는 회원정보 저장할 변수
             let json = null;
 
-            // try {
-            //     json = await MemberService.getLoginUser({
-            //         userid: id,
-            //         password: pw
-            //     });
-            // } catch (err) {
-            //     return next(err);
-            // }
+            try {
+                // 회원정보 DB에서 가져오기
+                json = await MemberService.getLoginUser({
+                    userid: userid,
+                });
+            } catch (err) {
+                return next(err);
+            }
 
-            console.log(req.sessionID);
-            req.session.userid = userid;
-            req.session.password = password;
-            req.session.username = "test2";
-            req.session.birthday = "1999-02-02";
-            req.session.email = "test2@gmail.com";
+            // 가져온 회원정보에서 저장된 password값만 추출
+            const { password } = json;
 
-            res.sendResult({ item: json });
+            // 비밀번호 비교 (복호화된 원본 비밀번호와 DB에 있는 해시 비밀번호와 비교)
+            const checkPassword = await bcrypt.compare(decrypted, password);
+            // 비밀번호 체크 후 보내줄 회원정보값
+            let memberInfo = null;
+
+            if (checkPassword) { // password 일치 --> 로그인 성공
+                req.session.userid = userid;
+                req.session.password = password;
+                logger.debug('----- req.session json -----');
+                logger.debug(JSON.stringify(req.session));
+                memberInfo = json;
+            } else { // password 불일치 --> 로그인 실패
+                const error = new BadRequestException('아이디나 비밀번호를 확인하세요.');
+                return next(error);
+            }
+
+            res.sendResult({ item: memberInfo });
         })
         .delete(url, async (req, res, next) => {
             try {

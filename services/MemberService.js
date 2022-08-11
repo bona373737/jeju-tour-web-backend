@@ -50,7 +50,7 @@ class MemberService{
     }
 
     /**회원정보 수정(프로필이미지 등록, 변경) */
-    async updateItem(params){
+    async updateProfile(params){
         let dbcon = null;
         let data =null;
 
@@ -58,15 +58,15 @@ class MemberService{
             dbcon = await DBPool.getConnection();
 
             //데이터 추가
-            let sql = mybatisMapper.getStatement('MemberMapper','updateItem',params)
-            let [{insertId, affectedRows}] = await dbcon.query(sql);
+            let sql = mybatisMapper.getStatement('MemberMapper','updateProfile',params)
+            let [{affectedRows}] = await dbcon.query(sql);
 
             if(affectedRows === 0){
                 throw new RuntimeException('[회원정보수정] 저장된 데이터가 없습니다.')
             }
 
             //수정된 데이터 조회
-            sql = mybatisMapper.getStatement('MemberMapper','selectItem',{member_no:insertId})
+            sql = mybatisMapper.getStatement('MemberMapper','selectItem',{member_no:params.member_no})
             let [result] = await dbcon.query(sql);
 
             //수정된 데이터를 세션에 저장

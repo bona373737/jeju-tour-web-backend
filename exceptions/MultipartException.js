@@ -1,3 +1,5 @@
+import multer from "multer";
+
 class MultipartException extends Error {
     constructor(err) {
         let msg = null;
@@ -11,7 +13,7 @@ class MultipartException extends Error {
                     msg = '업로드 가능한 파일 용량을 초과했습니다.';
                     break;
                 default:
-                    msg = '파일 업로드 도중 알 수 없는 에러가 발생했습니다.';
+                    msg = '파일 업로드 도중 알 수 없는 에러가 발생했습니다. : '+err.message;
                     break;
             }
         }

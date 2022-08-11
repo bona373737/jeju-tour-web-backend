@@ -14,11 +14,24 @@
 
     <!-- 단일 데이터 조회를 위한 기능 정의 -->
     <select id="selectItem">
-        SELECT userid, username, birthday, email, profile_img, reg_date, edit_date FROM members WHERE member_no=#{member_no};
+        SELECT userid, username, birthday, email, reg_date, edit_date, profile_img, profile_thumb FROM members WHERE member_no=#{member_no};
     </select>
 
-    <update id="updateItem">
-        UPDATE members SET profile_img= #{profile_img}
+    <update id="updateProfile">
+        UPDATE members SET 
+            <if test="birthday != null and birthday != ''">
+                birthday = #{birthday},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="profile_img != null and profile_img != ''">
+                profile_img = #{profile_img},
+            </if>
+            <if test="profile_thumb != null and profile_thumb != ''">
+                profile_thumb = #{profile_thumb},
+            </if>
+                edit_date = #{edit_date}
         WHERE member_no = #{member_no}
     </update>
 

@@ -83,7 +83,7 @@ const MemberController =()=>{
         res.sendResult({item: json});
     });
 
-    /** 회원 전체 데이터 조회 */
+    /** 관리자페이지 : 회원 전체 데이터 조회 */
     router.get(url, async (req, res, next) => {
         let json = null;
 
@@ -96,7 +96,7 @@ const MemberController =()=>{
         res.sendResult({ item: json });
     });
 
-    /** 회원 단일 데이터 조회 */
+    /** 관리자페이지 : 회원 단일 데이터 조회 */
     router.get(`${url}/:member_no`, async (req, res, next) => {
         // 회원 일련번호 받기
         const member_no = req.get('member_no');
@@ -149,7 +149,7 @@ const MemberController =()=>{
 
             //로그인된 회원번호_세션에 저장된 데이터 가져오기
             // const member_no = req.session.member_no;
-            const member_no = 45;
+            const member_no = 45; //테스트를 위한 임의값 저장
             const edit_date = now.format("YYYY-MM-DD HH:mm:ss");
             //사용자입력값 받기
             const birthday = req.post('birthday');
@@ -180,7 +180,7 @@ const MemberController =()=>{
                 return next(err);
             }
             
-            console.log(json)
+            // console.log(json)
             res.sendResult({item:json});
         });
     });

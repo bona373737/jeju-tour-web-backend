@@ -68,6 +68,14 @@ const LoginController = () => {
                 return next(error);
             }
 
+            //로그인 성공시 세션에 회원정보 저장
+            req.session.username = memberInfo.username;
+            req.session.birthday = memberInfo.birthday;
+            req.session.email = memberInfo.email;
+            req.session.profile_img = memberInfo.profile_img;
+            req.session.profile_thumb = memberInfo.profile_thumb;
+
+            //브라우저에게는 username값만 전달 -> "000"님 환영합니다.
             res.sendResult({ item: memberInfo });
         })
         .delete(url, async (req, res, next) => {
@@ -82,16 +90,23 @@ const LoginController = () => {
         // HTML 페이지 로드시 로그인 여부 검사
         .get(url, (req, res, next) => {
             // 세션에 저장된 아이디, 비밀번호 가져오기
-            const id = req.session.userid;
-            const pw = req.session.password;
+            const userinfo={
+                userid : req.session.userid,
+                birthday : req.session.birthday,
+                email : req.session.email,
+                profile_img : req.session.profile_img,
+                profile_thumb : req.session.profile_thumb
+            }
+            // console.log(userinfo);
 
             // 아이디가 undefined거나 비밀번호가 undefined라면?
-            if (id === undefined || pw === undefined) {
+            if (userinfo.userid === undefined) {
                 const error = new BadRequestException('현재 로그인 중이 아닙니다.');
                 return next(error);
-            } 
-
-            res.sendResult();
+            }
+            
+            //브라우저에 세션에 저장된 회원정보 전달
+            res.sendResult({item:userinfo});
         });
 
     return router;

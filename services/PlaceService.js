@@ -77,6 +77,40 @@ class PlaceService{
 
         return cnt;
     }
+
+    async insertItem(params){
+        let dbcon = null;
+        let data =null;
+
+        try {
+            dbcon = await DBPool.getConnection();
+
+            //데이터 추가
+            let sql = mybatisMapper.getStatement('PlaceMapper','insertItem',params)
+            let [{insertId, affectedRows}] = await dbcon.query(sql);
+
+            if(affectedRows === 0){
+                throw new RuntimeException('[여행지 정보추가] 저장된 데이터가 없습니다.')
+            }
+
+            //추가된 데이터(신규등록한 회원정보) 조회_비밀번호를 제외한 데이터를 반환한다.
+            sql = mybatisMapper.getStatement('PlaceMapper','selectItem',{place_no:insertId})
+            let [result] = await dbcon.query(sql);
+
+            if(result.length === 0){
+                throw new RuntimeException('[여행지 정보추가] 저장된 데이터를 조회할 수 없습니다.')
+            }
+
+            data = result[0];
+
+        } catch (error) {
+            throw error;
+        }finally{
+            if(dbcon){dbcon.release()};
+        }
+
+        return data;
+    }
 }
 
 export default new PlaceService;

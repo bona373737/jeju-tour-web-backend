@@ -11,13 +11,7 @@
         INSERT INTO members (userid, password, username, birthday, email, profile_img, reg_date, edit_date)
         VALUES (#{userid}, #{password}, #{username}, #{birthday}, #{email}, #{profile_img}, #{reg_date}, #{edit_date});
     </insert>
-
-    <!-- 프로필 이미지 업데이트를 위한 기능 정의  -->
-    <update id="updateItem">
-        UPDATE members SET profile_img= #{profile_img}
-        WHERE member_no = #{member_no}
-    </update>
-
+    
     <!-- 회원 전체 데이터 조회를 위한 기능 정의 (페이지네이션/검색 기능 X) -->
     <select id="selectList">
         SELECT member_no, userid, password, username, birthday, email, profile_img, reg_date, edit_date FROM members 
@@ -26,8 +20,27 @@
 
     <!-- 회원 단일 데이터 조회를 위한 기능 정의 -->
     <select id="selectItem">
-        SELECT userid, username, birthday, email, profile_img, reg_date, edit_date FROM members WHERE member_no=#{member_no};
+        SELECT userid, username, birthday, email, reg_date, edit_date, profile_img, profile_thumb FROM members WHERE member_no=#{member_no};
     </select>
+
+    <!-- 프로필 이미지 업데이트를 위한 기능 정의  -->
+    <update id="updateProfile">
+        UPDATE members SET 
+            <if test="birthday != null and birthday != ''">
+                birthday = #{birthday},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="profile_img != null and profile_img != ''">
+                profile_img = #{profile_img},
+            </if>
+            <if test="profile_thumb != null and profile_thumb != ''">
+                profile_thumb = #{profile_thumb},
+            </if>
+                edit_date = #{edit_date}
+        WHERE member_no = #{member_no}
+    </update>
 
     <!-- 아이디가 일치하는 회원 조회를 위한 기능 정의 -->
     <select id="selectUserid">

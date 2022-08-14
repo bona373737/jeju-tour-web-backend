@@ -8,15 +8,19 @@ import express from 'express';
 import dayjs from 'dayjs';
 import cryptojs from 'crypto-js';
 import bcrypt from 'bcrypt';
-// import formidable from 'formidable';
 import multer from 'multer';
+// import formidable from 'formidable';
+// import { json } from 'body-parser';
+
 /** 직접 구현한 모듈  */
 import logger from '../helper/LogHelper.js';
-// import { initMulter, checkUploadError, createThumbnail, createThumbnailMultiple } from '../helper/FileHelper.js';
 import regexHelper from '../helper/RegexHelper.js';
+// import { initMulter, checkUploadError, createThumbnail, createThumbnailMultiple } from '../helper/FileHelper.js';
+
 /** 예외처리 관련 클래스 */
 import BadRequestException from "../exceptions/BadRequestException.js";
 import MultipartException from "../exceptions/MultipartException.js";
+
 /** 회원 비즈니스로직 */
 import MemberService from '../services/MemberService.js';
 
@@ -218,6 +222,67 @@ const MemberController =()=>{
 
         res.sendResult({ item: memberInfo });
     });
+        
+    /** 회원정보 수정 */
+    //회원 정보 중 생년월일, 이메일, 프로필사진만 변경
+    router.patch(url, async(req,res,next)=>{
+
+        //업로드된 프로필사진 저장 폴더명
+        const dirName={
+            upload_dir : "profile_img",
+            thumb_dir: "profile_img"
+        }
+
+        const upload = initMulter(dirName).fields([{name:'profile_img',maxCount:1}]);
+        upload(req, res, async(err) => {
+            // 파일업로드 과정 중 에러가 존재한다면 예외처리 수행
+            if (err) {
+                return next(new MultipartException(err));
+            }
+
+            // 업로드 결과가 성공이라면 썸네일 생성 함수를 호출한다.
+            try {
+                createThumbnail(req.file, dirName);
+            } catch (error) {
+                return next(error);
+            }
+
+            //로그인된 회원번호_세션에 저장된 데이터 가져오기
+            // const member_no = req.session.member_no;
+            const member_no = 45;
+            const edit_date = now.format("YYYY-MM-DD HH:mm:ss");
+            //사용자입력값 받기
+            const birthday = req.post('birthday');
+            const email = req.post('email');
+            //업로드된 파일 경로 
+            const profile_img = req.file.path;
+            const profile_thumb = req.file.thumbnail["480w"];
+            
+            //사용자입력값 유효성 검사
+            try {
+                
+            } catch (error) {
+                
+            }
+            
+            //변경된 회원정보 DB에 적용 
+            let json = null;
+            try {
+                json = await MemberService.updateProfile({
+                    member_no : member_no,
+                    birthday : birthday,
+                    email : email,
+                    edit_date : edit_date,
+                    profile_img : profile_img,
+                    profile_thumb : profile_thumb
+                });
+            } catch (error) {
+                return next(err);
+            }
+            
+            console.log(json)
+            res.sendResult({item:json});
+        });
 
     return router;
 };

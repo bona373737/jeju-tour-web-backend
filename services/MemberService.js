@@ -49,7 +49,7 @@ class MemberService{
         return data;
     }
 
-    /**회원정보 수정(프로필이미지 등록, 변경) */
+    /** 회원정보 수정(프로필이미지 등록, 변경) */
     async updateItem(params){
         let dbcon = null;
         let data =null;
@@ -87,7 +87,7 @@ class MemberService{
     }
     
     /** 회원 전체 데이터 조회 */
-    async getList() {
+    async selectList() {
         let dbcon = null;
         let data = null;
 
@@ -111,7 +111,7 @@ class MemberService{
     }
 
     /** 회원 단일 데이터 조회 */
-    async getItem(params) {
+    async selectItem(params) {
         let dbcon = null;
         let data = null;
 
@@ -134,19 +134,19 @@ class MemberService{
         return data;
     }
 
-    /** 로그인 정보와 일치하는 회원 조회 */
-    async getLoginUser(params) {
+    /** 아이디가 일치하는 회원 조회 */
+    async selectUserid(params) {
         let dbcon = null;
         let data = null;
 
         try {
             dbcon = await DBPool.getConnection();
 
-            let sql = mybatisMapper.getStatement("MemberMapper", "loginUser", params);
+            let sql = mybatisMapper.getStatement("MemberMapper", "selectUserid", params);
             let [result] = await dbcon.query(sql);
             
             if (result.length === 0) {
-                throw new RuntimeException('[회원조회] 일치하는 회원 데이터가 없습니다.');
+                throw new RuntimeException('[회원조회] 아이디가 일치하는 회원 데이터가 없습니다.');
             }
 
             data = result[0];

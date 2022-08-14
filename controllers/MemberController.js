@@ -24,7 +24,7 @@ import MultipartException from "../exceptions/MultipartException.js";
 /** 회원 비즈니스로직 */
 import MemberService from '../services/MemberService.js';
 
-const MemberController =()=>{
+const MemberController = () => {
     const url = "/members";
     const urlLog = "/session/login";
     const router = express.Router();
@@ -283,7 +283,9 @@ const MemberController =()=>{
             console.log(json)
             res.sendResult({item:json});
         });
+    });
 
     return router;
 };
+
 export default MemberController;

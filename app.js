@@ -1,6 +1,6 @@
 /*----------------------------------------------------------
- | 1) 모듈참조
- -----------------------------------------------------------*/
+| 1) 모듈참조
+-----------------------------------------------------------*/
 /** 직접 구현한 모듈  */
 import logger from "./helper/LogHelper.js";
 import { myip, urlFormat } from "./helper/UtilHelper.js";
@@ -39,14 +39,14 @@ import LikeController from "./controllers/LikeController.js";
 import NoticeController from "./controllers/NoticeController.js";
 import TourInfoController from './controllers/TourInfoController.js';
 /*---------------------------------`-------------------------
- | 2) Express 객체 생성
- -----------------------------------------------------------*/
- const app = express();
+| 2) Express 객체 생성
+-----------------------------------------------------------*/
+const app = express();
 
- dotenv.config({path: join(resolve(), "../config.env")});
+dotenv.config({path: join(resolve(), "../config.env")});
 /*-----------------------------------------------------------
- 3) 클라이언트의 접속시 초기화
- ------------------------------------------------------------*/
+| 3) 클라이언트의 접속시 초기화
+------------------------------------------------------------*/
 app.use(useragent.express());
 
 app.use((req, res, next) => {
@@ -86,8 +86,8 @@ process.on('exit', () => { DBPool.close();
   logger.info('-------- Server is close -------');
   });
 /*----------------------------------------------------------
- | 4) Express 객체의 추가 설정(미들웨어등록)
- -----------------------------------------------------------*/
+| 4) Express 객체의 추가 설정(미들웨어등록)
+-----------------------------------------------------------*/
 app.use(cors({credentials: true, origin: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text());
@@ -116,9 +116,9 @@ app.use(serveFavicon(process.env.FAVICON_PATH));
 
 app.use(WebHelper());
 /*----------------------------------------------------------
- | 5) 각 URL별 백엔드 기능 정의(라우팅처리)
-      이부분은 미들웨어 순서대로 실행된다기 보다는 맞는 url에 매칭되는 controller가 실행된다 
- -----------------------------------------------------------*/
+| 5) 각 URL별 백엔드 기능 정의(라우팅처리)
+    이부분은 미들웨어 순서대로 실행된다기 보다는 맞는 url에 매칭되는 controller가 실행된다 
+-----------------------------------------------------------*/
 // app.use(SetupController());
 // app.use(GetParamsController());
 // app.use(PostPutDeleteController());
@@ -137,8 +137,8 @@ app.use(TourInfoController());
 app.use((err, req, res, next) => res.sendError(err));
 app.use("*", (req, res, next) => res.sendError(new PageNotFoundException()));
 /*----------------------------------------------------------
- | 6) 설정한 내용을 기반으로 서버 구동 시작
- -----------------------------------------------------------*/
+| 6) 설정한 내용을 기반으로 서버 구동 시작
+-----------------------------------------------------------*/
 const ip = myip();
 
 app.listen(process.env.PORT, () => {

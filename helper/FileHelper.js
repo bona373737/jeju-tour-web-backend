@@ -7,11 +7,6 @@ import {join, extname} from 'path';
 import multer from 'multer'; // 업로드 모듈
 import thumbnail from 'node-thumbnail'; // 썸네일 이미지 생성 모듈
 
-import fs from 'fs';
-import {join, extname} from 'path';
-import multer from 'multer'; // 업로드 모듈
-import thumbnail from 'node-thumbnail'; // 썸네일 이미지 생성 모듈
-
 const mkdirs = (target, permission='0755') => {
     // 경로가 없다면 수행하지 않는다.
     if (target == undefined || target == null) { return; }

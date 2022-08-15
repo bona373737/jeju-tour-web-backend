@@ -146,7 +146,7 @@ class MemberService{
             let [result] = await dbcon.query(sql);
             
             if (result.length === 0) {
-                throw new RuntimeException('[회원조회] 아이디가 일치하는 회원 데이터가 없습니다.');
+                throw new RuntimeException('아이디가 일치하지 않습니다. 다시 확인해주세요.');
             }
 
             data = result[0];

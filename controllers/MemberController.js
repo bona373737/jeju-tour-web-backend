@@ -128,22 +128,17 @@ const MemberController = () => {
 
     /** 회원 로그인 여부 검사 */
     router.get(urlLog, (req, res, next) => {
-        // 로그인 여부 검사 후 보내줄 회원정보값
-        let memberInfo = null;
+        // 회원정보 저장할 변수
+        let json = null;
 
-        if (req.session.user) { // 로그인 상태
-            logger.debug('----- req.session json -----');
-            logger.debug(JSON.stringify(req.session));
-            memberInfo = req.session.user;
-        } else { // 로그아웃 상태
-            memberInfo = {
-                isLogin: false,
-                userid: null,
-                username: null
-            };
+        if (req.session.user  === undefined) { // 로그아웃 상태
+            const err = new BadRequestException('로그인을 해주세요.');
+            return next(err);
+        } else { // 로그인 상태
+            json = req.session.user;
         }
 
-        res.sendResult({ item: memberInfo });
+        res.sendResult({item: json});
     });
 
     /** 회원 로그인 */
@@ -154,8 +149,8 @@ const MemberController = () => {
 
         // 아이디, 비밀번호 유효성 검사
         try { 
-            regexHelper.value(id, '아이디가 존재하지 않습니다.');
-            regexHelper.value(pw, '비밀번호가 존재하지 않습니다.');
+            regexHelper.value(id, '아이디를 입력해주세요.');
+            regexHelper.value(pw, '비밀번호를 입력해주세요.');
         } catch(err) {
             return next(err);
         }
@@ -170,7 +165,7 @@ const MemberController = () => {
         let json = null;
 
         try {
-            // 회원정보 DB에서 가져오기
+            // 아이디가 일치하는 회원정보 DB에서 가져오기
             json = await MemberService.selectUserid({
                 userid: id,
             });
@@ -182,47 +177,38 @@ const MemberController = () => {
         const { userid, password, username } = json;
         // 비밀번호 비교 (복호화된 원본 비밀번호와 DB에 있는 해시 비밀번호와 비교)
         const checkPassword = await bcrypt.compare(decrypted, password);
-        // 비밀번호 체크 후 보내줄 회원정보값
-        let memberInfo = null;
 
         if (checkPassword) { // password 일치 --> 로그인 성공
             req.session.user = {
-                isLogin: true,
                 userid: userid,
                 username: username
             };
-            logger.debug('----- req.session json -----');
-            logger.debug(JSON.stringify(req.session));
-            memberInfo = req.session.user;
         } else { // password 불일치 --> 로그인 실패
-            const err = new BadRequestException('아이디나 비밀번호를 확인하세요.');
+            const err = new BadRequestException('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
             return next(err);
         }
 
-        res.sendResult({ item: memberInfo });
+        res.sendResult({item: req.session.user});
     });
 
     /** 회원 로그아웃 */
     router.delete(urlLog, async (req, res, next) => {
-        // 로그인 정보값 초기화 (삭제)
-        let memberInfo = null;
+        // 회원정보 초기화할 변수
+        let json = null;
 
         try {
             await req.session.destroy();
-            memberInfo = {
-                isLogin: false,
+            json = {
                 userid: null,
                 username: null
-            };
-            logger.debug('----- req.session json -----');
-            logger.debug(JSON.stringify(req.session));
+            }
         } catch (err) {
             return next(err);
         }
-
-        res.sendResult({ item: memberInfo });
-    });
         
+        res.sendResult({item: json});
+    });
+    
     /** 회원정보 수정 */
     //회원 정보 중 생년월일, 이메일, 프로필사진만 변경
     router.patch(url, async(req,res,next)=>{

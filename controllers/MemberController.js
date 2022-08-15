@@ -15,7 +15,7 @@ import multer from 'multer';
 /** 직접 구현한 모듈  */
 import logger from '../helper/LogHelper.js';
 import regexHelper from '../helper/RegexHelper.js';
-// import { initMulter, checkUploadError, createThumbnail, createThumbnailMultiple } from '../helper/FileHelper.js';
+import { initMulter, checkUploadError, createThumbnail, createThumbnailMultiple } from '../helper/FileHelper.js';
 
 /** 예외처리 관련 클래스 */
 import BadRequestException from "../exceptions/BadRequestException.js";
@@ -41,7 +41,7 @@ const MemberController = () => {
         const username = req.post('username');
         const birthday = req.post('birthday');
         const email = req.post('email');
-        const profile_img = req.post('profile_img');
+        const profile_img = req.post('profile_img');    
         
         //유효성 검사
         try {
@@ -177,13 +177,14 @@ const MemberController = () => {
         } catch (err) {
             return next(err);
         }
-
+        
         // 가져온 회원정보에서 필요한 값만 추출
         const { userid, password, username } = json;
         // 비밀번호 비교 (복호화된 원본 비밀번호와 DB에 있는 해시 비밀번호와 비교)
         const checkPassword = await bcrypt.compare(decrypted, password);
         // 비밀번호 체크 후 보내줄 회원정보값
         let memberInfo = null;
+
 
         if (checkPassword) { // password 일치 --> 로그인 성공
             req.session.user = {
@@ -194,11 +195,12 @@ const MemberController = () => {
             logger.debug('----- req.session json -----');
             logger.debug(JSON.stringify(req.session));
             memberInfo = req.session.user;
+            
         } else { // password 불일치 --> 로그인 실패
             const err = new BadRequestException('아이디나 비밀번호를 확인하세요.');
             return next(err);
         }
-
+        
         res.sendResult({ item: memberInfo });
     });
 

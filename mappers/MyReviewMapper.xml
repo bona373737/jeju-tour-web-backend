@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MyReviewMapper">
+
+    <select id="selectList">
+        SELECT review_no, member_no, ref_id, ref_type, title, content, image, thumbnail, reg_date, edit_date FROM reviews 
+        WHERE member_no = #{member_no} 
+        <if test="listCount > 0" >
+            LIMIT ${offset}, ${listCount}
+        </if>
+    </select>
+
+    <select id="selectCount">
+        SELECT count(*) FROM reviews WHERE member_no=#{member_no};
+    </select>
+
+    <select id="selectItem">
+        SELECT review_no, member_no, ref_id, ref_type, title, content, image, thumbnail, reg_date, edit_date FROM reviews 
+        WHERE review_no = #{review_no} 
+    </select>
+
+    <select id="updateItem">
+        UPDATE reviews SET
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="image != null and image != ''">
+                image = #{image},
+            </if>
+            <if test="thumbnail != null and thumbnail != ''">
+                thumbnail = #{thumbnail},
+            </if>
+                edit_date = #{edit_date}
+        WHERE review_no = #{review_no}
+    </select>
+
+    <insert id="insertItem">
+        INSERT INTO reviews (review_no ,member_no, ref_id, ref_type, title, content, image, thumbnail, reg_date, edit_date)
+        VALUES (#{review_no}, #{member_no}, #{ref_id}, #{ref_type}, #{title}, #{content}, #{image}, #{thumbnail}, #{reg_date}, #{edit_date});
+    </insert>
+
+    <update id="deleteItem">
+        DELETE FROM reviews WHERE review_no = #{review_no};
+    </update>
+
+</mapper>

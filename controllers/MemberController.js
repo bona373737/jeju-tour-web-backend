@@ -156,7 +156,7 @@ const MemberController = () => {
         }
 
         // AES알고리즘 사용 --> 프론트에서 전달받은 암호값 복호화 ( 복구 키 필요 )
-        const secretKey = process.env.CRYPTO_KEY; //config.env파일로 불러오게 수정 필요
+        const secretKey = process.env.CRYPTO_KEY;
         const bytes = cryptojs.AES.decrypt(pw, secretKey);
         // 인코딩, 문자열로 변환, JSON 변환 --> 사용자 입력값 도출
         const decrypted = bytes.toString(cryptojs.enc.Utf8);

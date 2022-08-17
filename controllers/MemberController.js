@@ -57,7 +57,7 @@ const MemberController = () => {
         }
 
         // AES알고리즘 사용 복호화 ( 복구 키 필요 )
-        const secretKey = 'secret key';
+        const secretKey = process.env.CRYPTO_KEY;
         const bytes = cryptojs.AES.decrypt(password, secretKey);
         // 인코딩, 문자열로 변환, JSON 변환
         const decrypted = bytes.toString(cryptojs.enc.Utf8);
@@ -156,7 +156,7 @@ const MemberController = () => {
         }
 
         // AES알고리즘 사용 --> 프론트에서 전달받은 암호값 복호화 ( 복구 키 필요 )
-        const secretKey = 'secret key'; //config.env파일로 불러오게 수정 필요
+        const secretKey = process.env.CRYPTO_KEY;
         const bytes = cryptojs.AES.decrypt(pw, secretKey);
         // 인코딩, 문자열로 변환, JSON 변환 --> 사용자 입력값 도출
         const decrypted = bytes.toString(cryptojs.enc.Utf8);
@@ -174,15 +174,18 @@ const MemberController = () => {
         }
         
         // 가져온 회원정보에서 필요한 값만 추출
-        const { userid, password, username } = json;
+        const { member_no, userid, password, username, profile_img, profile_thumb } = json;
         // 비밀번호 비교 (복호화된 원본 비밀번호와 DB에 있는 해시 비밀번호와 비교)
         const checkPassword = await bcrypt.compare(decrypted, password);
 
 
         if (checkPassword) { // password 일치 --> 로그인 성공
             req.session.user = {
+                member_no: member_no,
                 userid: userid,
-                username: username
+                username: username,
+                profile_img: profile_img,
+                profile_thumb: profile_thumb,
             };
         } else { // password 불일치 --> 로그인 실패
             const err = new BadRequestException('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
@@ -200,8 +203,11 @@ const MemberController = () => {
         try {
             await req.session.destroy();
             json = {
+                member_no: null,
                 userid: null,
-                username: null
+                username: null,
+                profile_img: null,
+                profile_thumb: null,
             }
         } catch (err) {
             return next(err);
@@ -235,8 +241,8 @@ const MemberController = () => {
             }
 
             //로그인된 회원번호_세션에 저장된 데이터 가져오기
-            // const member_no = req.session.member_no;
-            const member_no = 45;
+            const member_no = req.session.user.member_no;
+            // const member_no = 45;
             const edit_date = now.format("YYYY-MM-DD HH:mm:ss");
             //사용자입력값 받기
             const birthday = req.post('birthday');

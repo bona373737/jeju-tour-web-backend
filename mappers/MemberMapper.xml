@@ -8,13 +8,13 @@
 <mapper namespace='MemberMapper'>
     <!-- 회원 가입을 위한 기능 정의 -->
     <insert id='insertItem'>
-        INSERT INTO members (userid, password, username, birthday, email, profile_img, reg_date, edit_date)
-        VALUES (#{userid}, #{password}, #{username}, #{birthday}, #{email}, #{profile_img}, #{reg_date}, #{edit_date});
+        INSERT INTO members (userid, password, username, birthday, email, profile_img, profile_thumb, reg_date, edit_date)
+        VALUES (#{userid}, #{password}, #{username}, #{birthday}, #{email}, #{profile_img}, #{profile_thumb}, #{reg_date}, #{edit_date});
     </insert>
     
     <!-- 회원 전체 데이터 조회를 위한 기능 정의 (페이지네이션/검색 기능 X) -->
     <select id="selectList">
-        SELECT member_no, userid, password, username, birthday, email, profile_img, reg_date, edit_date FROM members 
+        SELECT member_no, userid, password, username, birthday, email, profile_img, profile_thumb, reg_date, edit_date FROM members 
         ORDER BY member_no DESC
     </select>
 

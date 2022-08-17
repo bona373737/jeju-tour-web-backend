@@ -41,7 +41,7 @@ const MemberController = () => {
         const username = req.post('username');
         const birthday = req.post('birthday');
         const email = req.post('email');
-        const profile_img = req.post('profile_img');
+        const profile_img = req.post('profile_img');    
         
         //유효성 검사
         try {
@@ -172,11 +172,12 @@ const MemberController = () => {
         } catch (err) {
             return next(err);
         }
-
+        
         // 가져온 회원정보에서 필요한 값만 추출
         const { member_no, userid, password, username, profile_img, profile_thumb } = json;
         // 비밀번호 비교 (복호화된 원본 비밀번호와 DB에 있는 해시 비밀번호와 비교)
         const checkPassword = await bcrypt.compare(decrypted, password);
+
 
         if (checkPassword) { // password 일치 --> 로그인 성공
             req.session.user = {
@@ -274,7 +275,8 @@ const MemberController = () => {
             
             console.log(json)
             res.sendResult({item:json});
-        });
+        })
+    
     });
 
     return router;

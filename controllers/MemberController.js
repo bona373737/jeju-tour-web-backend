@@ -269,7 +269,8 @@ const MemberController = () => {
             
             console.log(json)
             res.sendResult({item:json});
-        });
+        })
+    
     });
 
     return router;

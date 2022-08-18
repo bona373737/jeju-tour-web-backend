@@ -22,9 +22,8 @@ const ReviewController = () => {
     router.get(url, async (req, res, next) => {
 
         //세션에 저장된 member_no값 가져오기
-        //const member_no = req.session.member_no; 
-        const member_no = req.get('member_no'); 
-        
+        const member_no = req.session.user.member_no; 
+        // const member_no = req.get('member_no'); 
         // 페이지 번호 파라미터 (기본값은 1)
         const page = req.get('page', 1);
         // 한 페이지에 보여질 목록 수 받기 (기본값은 10)

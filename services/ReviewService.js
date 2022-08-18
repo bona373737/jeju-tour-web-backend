@@ -68,7 +68,6 @@ class ReviewService{
     async selectCount(params){
         let dbcon = null;
         let cnt = 0;
-
         try {
             dbcon = await DBPool.getConnection();
             let sql = mybatisMapper.getStatement('ReviewMapper','selectCount',params)

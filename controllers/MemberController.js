@@ -37,18 +37,26 @@ const MemberController = () => {
         //클라이언트 입력값 가져오기
         const userid = req.post('userid');
         let password = req.post('password');
-        const passwordCheck = req.post('passwordCheck');
+        let passwordCheck = req.post('passwordCheck');
         const username = req.post('username');
         const birthday = req.post('birthday');
         const email = req.post('email');
-        const profile_img = req.post('profile_img');    
         
+        // AES알고리즘 사용 복호화 ( 복구 키 필요 )
+        const secretKey = process.env.CRYPTO_KEY;
+        const pwBytes = cryptojs.AES.decrypt(password, secretKey);
+        const pwCheckBytes = cryptojs.AES.decrypt(passwordCheck, secretKey);
+        
+        // 인코딩, 문자열로 변환, JSON 변환
+        const pwDecrypted = pwBytes.toString(cryptojs.enc.Utf8);
+        const pwCheckDecrypted = pwCheckBytes.toString(cryptojs.enc.Utf8);
+
         //유효성 검사
         try {
             regexHelper.value(userid, '[회원등록] 사용자 아이디가 없습니다.');
             regexHelper.engNum(userid, '[회원등록] 사용자 아이디는 영문,숫자 조합만 가능합니다.');
-            regexHelper.value(password, '[회원등록] 비밀번호가 없습니다.');
-            regexHelper.value(passwordCheck, '[회원등록] 비밀번호 확인이 없습니다.');
+            regexHelper.value(pwDecrypted, '[회원등록] 비밀번호가 없습니다.');
+            regexHelper.value(pwCheckDecrypted, '[회원등록] 비밀번호 확인이 없습니다.');
             regexHelper.value(username, '[회원등록] 사용자이름이 없습니다.');
             regexHelper.value(email, '[회원등록] 이메일이 없습니다.');
             regexHelper.email(email, '[회원등록] 이메일형식이 올바르지 않습니다. ')
@@ -56,15 +64,9 @@ const MemberController = () => {
             return next(err);
         }
 
-        // AES알고리즘 사용 복호화 ( 복구 키 필요 )
-        const secretKey = 'secret key';
-        const bytes = cryptojs.AES.decrypt(password, secretKey);
-        // 인코딩, 문자열로 변환, JSON 변환
-        const decrypted = bytes.toString(cryptojs.enc.Utf8);
-
         // 비밀번호 암호화(프론트에서 암호화한 값 전달받아 복호화 한뒤 단방향암호화 하여 DB에 저장)
         const salt = await bcrypt.genSalt(10);
-        password = await bcrypt.hash(decrypted, salt);
+        password = await bcrypt.hash(pwDecrypted, salt);
 
         let json = null;
 
@@ -75,7 +77,6 @@ const MemberController = () => {
                 username: username,
                 birthday: birthday,
                 email : email,
-                profile_img : profile_img,
                 reg_date : now.format("YYYY-MM-DD HH:mm:ss"),
                 edit_date : now.format("YYYY-MM-DD HH:mm:ss")
             });
@@ -83,7 +84,9 @@ const MemberController = () => {
             return next(err);
         }
 
-        res.sendResult({item: json});
+        // console.log(json)
+        res.sendResult({item: json.userid});
+        // res.sendResult({item: "성공"});
     });
 
     /** 관리자페이지 : 회원 전체 데이터 조회 */
@@ -156,7 +159,7 @@ const MemberController = () => {
         }
 
         // AES알고리즘 사용 --> 프론트에서 전달받은 암호값 복호화 ( 복구 키 필요 )
-        const secretKey = 'secret key'; //config.env파일로 불러오게 수정 필요
+        const secretKey = process.env.CRYPTO_KEY;
         const bytes = cryptojs.AES.decrypt(pw, secretKey);
         // 인코딩, 문자열로 변환, JSON 변환 --> 사용자 입력값 도출
         const decrypted = bytes.toString(cryptojs.enc.Utf8);
@@ -174,15 +177,18 @@ const MemberController = () => {
         }
         
         // 가져온 회원정보에서 필요한 값만 추출
-        const { userid, password, username } = json;
+        const { member_no, userid, password, username, profile_img, profile_thumb } = json;
         // 비밀번호 비교 (복호화된 원본 비밀번호와 DB에 있는 해시 비밀번호와 비교)
         const checkPassword = await bcrypt.compare(decrypted, password);
 
 
         if (checkPassword) { // password 일치 --> 로그인 성공
             req.session.user = {
+                member_no: member_no,
                 userid: userid,
-                username: username
+                username: username,
+                profile_img: profile_img,
+                profile_thumb: profile_thumb,
             };
         } else { // password 불일치 --> 로그인 실패
             const err = new BadRequestException('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
@@ -200,8 +206,11 @@ const MemberController = () => {
         try {
             await req.session.destroy();
             json = {
+                member_no: null,
                 userid: null,
-                username: null
+                username: null,
+                profile_img: null,
+                profile_thumb: null,
             }
         } catch (err) {
             return next(err);
@@ -235,8 +244,7 @@ const MemberController = () => {
             }
 
             //로그인된 회원번호_세션에 저장된 데이터 가져오기
-            // const member_no = req.session.member_no;
-            const member_no = 45; //테스트를 위한 임의값 저장
+            const member_no = req.session.user.member_no;
             const edit_date = now.format("YYYY-MM-DD HH:mm:ss");
             //사용자입력값 받기
             const birthday = req.post('birthday');
@@ -269,7 +277,8 @@ const MemberController = () => {
             
             // console.log(json)
             res.sendResult({item:json});
-        });
+        })
+    
     });
 
     return router;

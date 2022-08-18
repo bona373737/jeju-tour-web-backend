@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="MyReviewMapper">
+<mapper namespace="ReviewMapper">
 
     <select id="selectList">
         SELECT review_no, member_no, ref_id, ref_type, title, content, image, thumbnail, reg_date, edit_date FROM reviews 
@@ -39,8 +39,8 @@
     </select>
 
     <insert id="insertItem">
-        INSERT INTO reviews (review_no ,member_no, ref_id, ref_type, title, content, image, thumbnail, reg_date, edit_date)
-        VALUES (#{review_no}, #{member_no}, #{ref_id}, #{ref_type}, #{title}, #{content}, #{image}, #{thumbnail}, #{reg_date}, #{edit_date});
+        INSERT INTO reviews (member_no, ref_id, ref_type, title, content, image, thumbnail, reg_date, edit_date)
+        VALUES (#{member_no}, #{ref_id}, #{ref_type}, #{title}, #{content}, #{image}, #{thumbnail}, #{reg_date}, #{edit_date});
     </insert>
 
     <update id="deleteItem">

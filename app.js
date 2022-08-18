@@ -6,10 +6,8 @@ import logger from "./helper/LogHelper.js";
 import { myip, urlFormat } from "./helper/UtilHelper.js";
 import WebHelper from "./helper/WebHelper.js";
 import DBPool from "./helper/DBPool.js";
-
 /** 내장모듈 */
 import { join, resolve } from "path";
-
 /** 설치가 필요한 모듈 */
 import dotenv from "dotenv";
 import express from "express";
@@ -21,18 +19,9 @@ import methodOverride from "method-override";
 import cookieParser from "cookie-parser";
 import expressSession from "express-session";
 import cors from "cors";
-
 /** 예외처리 관련 클래스 */
 import PageNotFoundException from "./exceptions/PageNotFoundException.js";
-
 /** URL을 라우팅하는 모듈 참조 */
-// import SetupController from './controllers/SetupController.js';
-// import GetParamsController from './controllers/GetParamsController.js';
-// import PostPutDeleteController from './controllers/PostPutDeleteController.js';
-// import CookieController from './controllers/CookieController.js';
-// import SessionController from './controllers/SessionController.js';
-// import SendMailController from './controllers/SendMailController.js';
-// import FileUploadController from './controllers/FileUploadController.js';
 import PlaceController from "./controllers/PlaceController.js";
 import MemberController from "./controllers/MemberController.js";
 import LikeController from "./controllers/LikeController.js";
@@ -120,13 +109,6 @@ app.use(WebHelper());
 | 5) 각 URL별 백엔드 기능 정의(라우팅처리)
     이부분은 미들웨어 순서대로 실행된다기 보다는 맞는 url에 매칭되는 controller가 실행된다 
 -----------------------------------------------------------*/
-// app.use(SetupController());
-// app.use(GetParamsController());
-// app.use(PostPutDeleteController());
-// app.use(CookieController());
-// app.use(SessionController());
-// app.use(SendMailController());
-// app.use(FileUploadController());
 app.use(PlaceController());
 app.use(MemberController());
 app.use(LikeController());

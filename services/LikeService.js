@@ -63,7 +63,6 @@ class LikeService{
         return data;
     };
 
-
     async selectCount(params){
         let dbcon = null;
         let cnt = 0;
@@ -85,6 +84,29 @@ class LikeService{
 
         return cnt;
     };
+
+    async selectItem(params) {
+        let dbcon = null;
+        let data = null;
+
+        try {
+            dbcon = await DBPool.getConnection();
+
+            let sql = mybatisMapper.getStatement("LikeMapper", "selectItem", params);
+            let [result] = await dbcon.query(sql);
+            
+            if (result.length === 0) {
+                throw new RuntimeException('[좋아요] 좋아요로 등록된 데이터가 없습니다.');
+            }
+
+            data = result[0];
+        } catch (err) {
+            throw err;
+        } finally {
+            if (dbcon) { dbcon.release(); }
+        }
+        return data;
+    }
 
     async insertItem(params){
         let dbcon = null;

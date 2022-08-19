@@ -16,7 +16,8 @@
     </select>
 
     <select id="selectItem">
-        SELECT  like_no,member_no, ref_id, ref_type FROM likes WHERE like_no = #{like_no};
+        SELECT  like_no, member_no, ref_id, ref_type FROM likes 
+        WHERE member_no = #{member_no} AND ref_id = #{ref_id} AND ref_type = #{ref_type};
     </select>
 
     <insert id="insertItem">

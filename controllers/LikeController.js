@@ -14,13 +14,15 @@ const LikeController = () => {
 
     /** 특정사용자(memberno)의 전체 목록 조회 */
     router.get(url, async (req, res, next) => {
-        // memberno 파라미터
+        // 파라미터
         const member_no = req.get('member_no');
+        const ref_id = req.get('ref_id');
+        const ref_type = req.get('ref_type');
         // 페이지 번호 파라미터 (기본값은 1)
         const page = req.get('page', 1);
         // 한 페이지에 보여질 목록 수 받기 (기본값은 10)
         const rows = req.get('rows', 10);
-
+        
         const params = {};
         if (member_no) {
             params.member_no = Number(member_no);
@@ -45,6 +47,39 @@ const LikeController = () => {
         res.sendResult({pagenation: pageInfo, item: json});
     });
 
+    /** 좋아요여부확인기능_member_no, ref_id, ref_type값으로 데이터 조회 */
+    router.get(`${url}/isliked`, async (req, res, next) => {
+        // 파라미터
+        // const member_no = req.get('member_no');
+        const member_no = req.session.user.member_no;
+        const ref_id = req.get('ref_id');
+        const ref_type = req.get('ref_type');
+
+        // 파라미터 유효성검사
+        try {
+            
+        } catch (error) {
+            
+        }
+        
+        //파라미터 객체에 담기
+        const params = {};
+        params.member_no = Number(member_no);
+        params.ref_id = Number(ref_id);
+        params.ref_type = ref_type;
+
+        //
+        let json = null;
+        try {
+            json = await LikeService.selectItem(params);
+            console.log(json);
+        } catch (err) {
+            return next(err);
+        }
+        //응답데이터 없음 ->현재 로그인된 사용자가 해당 여행정보를 좋아요 했는지 여부만 확인필요.
+        res.sendResult({item:{isLiked :true, like_no:json.like_no }});
+    });
+
     /** 데이터 추가 --> Create(INSERT) */
     router.post(url, async (req, res, next) => {
         // 파라미터 받기
@@ -53,13 +88,13 @@ const LikeController = () => {
         const ref_type = req.post('ref_type');
         //프론트로부터 placeno, accomno, foodno값을 전달받은뒤 
         //ref_id와 ref_type값으로 할당하는 처리 필요함
-        if(req.placeno){
+        if(req.place_no){
             ref_id = req.post('place_no')
             ref_type = "P"
-        }else if(req.accomno){
+        }else if(req.accom_no){
             ref_id = req.post('accom_no')
             ref_type = "A"
-        }else if(req.foodno){
+        }else if(req.food_no){
             ref_id = req.post('food_no')
             ref_type = "F"
         }
@@ -92,21 +127,22 @@ const LikeController = () => {
 
 
     /** 데이터 삭제 --> Delete(DELETE) */
-    router.delete(`${url}/:likeno`, async (req, res, next) => {
+    router.delete(`${url}/:like_no`, async (req, res, next) => {
         // 파라미터 받기
-        const likeno = req.get('likeno');
+        const like_no = req.get('like_no');
+        console.log(like_no);
         
         //유효성 검사
         try {
-            regexHelper.value(likeno, '좋아요번호가 없습니다.');
-            regexHelper.num(likeno, '좋아요번호가 잘못되었습니다_번호는 숫자만 가능');
+            regexHelper.value(like_no, '좋아요번호가 없습니다.');
+            regexHelper.num(like_no, '좋아요번호가 잘못되었습니다_번호는 숫자만 가능');
         } catch (err) {
             return next(err);
         }
 
         try {
             await LikeService.deleteItem({
-                likeno: likeno
+                like_no: like_no
             });
         } catch (err) {
             return next(err);

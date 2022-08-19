@@ -22,8 +22,8 @@ const ReviewController = () => {
     router.get(`${url}/:ref_type/:ref_id`, async (req, res, next) => {
 
         //path파라미터값 변수저장
-        let ref_type = req.get("ref_type");
         const ref_id = req.get("ref_id");
+        let ref_type = req.get("ref_type");
 
         switch (ref_type) {
             case "place":

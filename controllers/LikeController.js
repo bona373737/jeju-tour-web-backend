@@ -118,14 +118,6 @@ const LikeController = () => {
             default:
                 break;
         }
-        
-        if(ref_type){
-            ref_type = "P"
-        }else if(req.accom_no){
-            ref_type = "A"
-        }else if(req.food_no){
-            ref_type = "F"
-        }
 
         // 유효성 검사
         try {

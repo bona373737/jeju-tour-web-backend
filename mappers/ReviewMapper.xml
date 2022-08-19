@@ -11,8 +11,20 @@
         </if>
     </select>
 
+    <select id="selectListRef">
+        SELECT review_no, member_no, ref_id, ref_type, title, content, image, thumbnail, reg_date, edit_date FROM reviews 
+        WHERE ref_type = #{ref_type} AND ref_id = #{ref_id}
+        <if test="listCount > 0" >
+            LIMIT ${offset}, ${listCount}
+        </if>
+    </select>
+
     <select id="selectCount">
         SELECT count(*) FROM reviews WHERE member_no = #{member_no};
+    </select>
+
+    <select id="selectCountRef">
+        SELECT count(*) FROM reviews WHERE ref_type = #{ref_type} AND ref_id = #{ref_id};
     </select>
 
     <select id="selectItem">

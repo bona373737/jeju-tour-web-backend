@@ -12,7 +12,7 @@ import LikeService from '../services/LikeService.js';
 const LikeController = () => {
     const url = "/likes";
     const router = express.Router();
-    const now = dayjs().format('YYYY-MM-DD 00:00:00');
+    const now = dayjs().format('YYYY-MM-DD HH:mm:ss');
 
     /** 특정사용자(memberno)의 전체 목록 조회 */
     router.get(url, async (req, res, next) => {

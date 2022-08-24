@@ -11,12 +11,19 @@
     </select>
 
     <!-- select 다중행 -->
+    <!-- 로그인상태 member_no값의 여부에 따라 검색 쿼리 변경 : 좋아요 된상태 -->
     <select id="selectList">
-        SELECT place_no,title, introduction, sbst, postcode, address, roadaddress, phoneno, alltag, tag, longitude, latitude, reg_date, edit_date, image, thumbnail 
-        FROM places 
-        <where>
-   
-        </where>
+        SELECT p.place_no, p.title, p.introduction, p.sbst, p.postcode, p.address, p.roadaddress, p.phoneno, p.alltag, p.tag, p.longitude, p.latitude, p.reg_date, p.edit_date, p.image, p.thumbnail 
+        <if test="member_no != null and member_no != ''">
+            ,l.like_no
+        </if>
+        FROM places AS p
+        <if test="member_no != null and member_no != ''">
+        LEFT OUTER JOIN likes AS l ON p.place_no = l.ref_id 
+        AND ref_type='P'
+        AND member_no = #{member_no}
+        </if>
+
         ORDER BY place_no DESC
 
         <if test="listCount>0">
@@ -27,10 +34,6 @@
     <!-- 데이터 전체개수 -->
     <select id="selectCountAll">
         SELECT COUNT(*) AS cnt FROM places
-        <where>
-
-        </where>
-
     </select>
 
     <!-- 여행지 정보 추가 -->

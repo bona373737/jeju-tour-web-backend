@@ -12,14 +12,13 @@ import LikeService from '../services/LikeService.js';
 const LikeController = () => {
     const url = "/likes";
     const router = express.Router();
-    const now = dayjs().format('YYYY-MM-DD 00:00:00');
+    const now = dayjs().format('YYYY-MM-DD HH:mm:ss');
 
     /** 특정사용자(memberno)의 전체 목록 조회 */
     router.get(url, async (req, res, next) => {
         // 파라미터
-        const member_no = req.get('member_no');
-        const ref_id = req.get('ref_id');
-        const ref_type = req.get('ref_type');
+        // const member_no = req.get('member_no');
+        const member_no = req.session.user.member_no;
         // 페이지 번호 파라미터 (기본값은 1)
         const page = req.get('page', 1);
         // 한 페이지에 보여질 목록 수 받기 (기본값은 10)
@@ -88,7 +87,6 @@ const LikeController = () => {
         let json = null;
         try {
             json = await LikeService.selectItem(params);
-            console.log(json);
         } catch (err) {
             return next(err);
         }
@@ -100,7 +98,7 @@ const LikeController = () => {
     router.post(url, async (req, res, next) => {
         // 파라미터 받기
         const member_no = Number(req.session.user.member_no);
-        console.log(member_no);
+        // console.log(member_no);
         let ref_id = req.post('ref_id')
         let ref_type = req.post('ref_type')
         //프론트로부터 placeno, accomno, foodno값을 전달받은뒤 

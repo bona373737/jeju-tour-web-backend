@@ -53,6 +53,7 @@ class LikeService{
                                                                             //객체의 key를 동적할당할때 표기법
                 let tourSql = mybatisMapper.getStatement(mapperName,'selectItem',{ [type] : Number(v.ref_id)});
                 let [tourResult] = await dbcon.query(tourSql);
+                tourResult[0].like_no = v.like_no;
                 data.push(tourResult[0])
             };
         } catch (error) {

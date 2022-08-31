@@ -15,9 +15,13 @@
         SELECT count(*) FROM likes WHERE member_no=#{member_no};
     </select>
 
-    <select id="selectItem">
+    <!-- <select id="selectItem">
         SELECT  like_no, member_no, ref_id, ref_type FROM likes 
         WHERE member_no = #{member_no} AND ref_id = #{ref_id} AND ref_type = #{ref_type};
+    </select> -->
+    <select id="selectItem">
+        SELECT  like_no, member_no, ref_id, ref_type FROM likes 
+        WHERE like_no = #{like_no};
     </select>
 
     <insert id="insertItem">

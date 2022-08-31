@@ -17,12 +17,20 @@
     <!-- 다중행 조회를 위한 기능 정의 -->
     <select id='selectList'>
         SELECT faq_no, title, content, reg_date, edit_date FROM faq
+
         <where>
-            <if test="title != null and title != ''">
-                title LIKE concat('%', #{title}, '%')
+            <if test="query != null and query != ''">
+                <if test="type == 'T'">
+                    title LIKE concat('%', #{query}, '%')
+                </if>
+                <if test="type == 'C'">
+                    OR content LIKE concat('%', #{query}, '%')
+                </if>
             </if>
         </where>
+
         ORDER BY faq_no DESC
+
         <!-- 페이지 구현을 위한 LIMIT절 추가 -->
         <if test='listCount > 0'>
             LIMIT ${offset}, ${listCount}
@@ -50,9 +58,15 @@
     <!-- 데이터 수 조회하기 -->
     <select id='selectCountAll'>
         SELECT COUNT(*) AS cnt FROM faq
+        
         <where>
-            <if test="title != null and title != ''">
-                title LIKE concat('%', #{title}, '%')
+            <if test="query != null and query != ''">
+                <if test="type == 'T'">
+                    title LIKE concat('%', #{query}, '%')
+                </if>
+                <if test="type == 'C'">
+                    OR content LIKE concat('%', #{query}, '%')
+                </if>
             </if>
         </where>
     </select>

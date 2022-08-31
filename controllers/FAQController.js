@@ -14,6 +14,8 @@ const FAQController = () => {
 
     /** 전체 목록 조회 --> Read(SELECT) */
     router.get(url, async (req, res, next) => {
+        // 검색어 타입
+        const type = req.get('type');
         // 검색어 파라미터
         const query = req.get('query');
         // 페이지 번호 파라미터 (기본값 1)
@@ -24,7 +26,8 @@ const FAQController = () => {
         // 검색어가 있다면 json으로 구성
         const params = {};
         if (query) {
-            params.name = query;
+            params.type = type;
+            params.query = query;
         }
 
         // 데이터 조회

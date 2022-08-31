@@ -124,15 +124,16 @@ class LikeService{
                 throw new RuntimeException('저장된 데이터가 없습니다.')
             }
 
+            params.like_no = insertId;
             //Likes 테이블에 추가된 데이터 조회
-            // sql = mybatisMapper.getStatement('LikeMapper','selectItem',{like_no:insertId})
-            // let [result] = await dbcon.query(sql);
+            sql = mybatisMapper.getStatement('LikeMapper','selectItem',params)
+            let [result] = await dbcon.query(sql);
 
-            // if(result.length === 0){
-            //     throw new RuntimeException('저장된 데이터를 조회할 수 없습니다.')
-            // }
+            if(result.length === 0){
+                throw new RuntimeException('저장된 데이터를 조회할 수 없습니다.')
+            }
 
-            // data = result;
+            data = result;
         } catch (error) {
             throw error;
         }finally{

@@ -18,13 +18,61 @@ const ReviewController = () => {
     const router = express.Router();
     const now = dayjs().format('YYYY-MM-DD HH:mm:ss');
 
+    /**특정 여행지정보에 작성된 리뷰글 전체 목록 조회 */
+    router.get(`${url}/:ref_type/:ref_id`, async (req, res, next) => {
+
+        //path파라미터값 변수저장
+        const ref_id = req.get("ref_id");
+        let ref_type = req.get("ref_type");
+
+        switch (ref_type) {
+            case "place":
+                ref_type = 'P';
+            break;
+            case "accom":
+                ref_type = 'A';
+            break;
+            case "food":
+                ref_type = 'F'; 
+            break;
+            default:
+                break;
+        }
+
+        // 페이지 번호 파라미터 (기본값은 1)
+        const page = req.get('page', 1);
+        // 한 페이지에 보여질 목록 수 받기 (기본값은 10)
+        const rows = req.get('rows', 10);
+
+        const params = {};
+        params.ref_type = ref_type;
+        params.ref_id = ref_id;
+
+        // 데이터 조회
+        let json = null;
+        let pageInfo = null;
+
+        try {
+            // 특정여행지(ref_id, ref_type)의 전체 데이터 수 얻기
+            const totalCount = await ReviewService.selectCountRef(params);
+            pageInfo = pagenation(totalCount, page, rows);
+            
+            params.offset = pageInfo.offset;
+            params.listCount = pageInfo.listCount;
+            json = await ReviewService.selectListRef(params);
+        } catch (err) {
+            return next(err);
+        }
+
+        res.sendResult({pagenation: pageInfo, item: json});
+    });
+
     /** 특정사용자(memberno)가 작성한 리뷰글 전체 목록 조회 */
     router.get(url, async (req, res, next) => {
 
         //세션에 저장된 member_no값 가져오기
-        //const member_no = req.session.member_no; 
-        const member_no = req.get('member_no'); 
-        
+        const member_no = req.session.user.member_no; 
+        // const member_no = req.get('member_no'); 
         // 페이지 번호 파라미터 (기본값은 1)
         const page = req.get('page', 1);
         // 한 페이지에 보여질 목록 수 받기 (기본값은 10)
@@ -142,7 +190,7 @@ const ReviewController = () => {
     });
 
 
-    /** 데이터 삭제 --> Delete(DELETE) */
+    /** 리뷰글 삭제 --> Delete(DELETE) */
     router.delete(`${url}/:review_no`, async (req, res, next) => {
         // 파라미터 받기
         const review_no = req.get('review_no');

@@ -18,7 +18,10 @@ const PlaceController = () => {
 
         const params = {};
         if (query) {
-            params.query = query;
+            params.title = query;
+            params.introduction = query;
+            params.alltag = query;
+            params.tag = query;
         }
         if (member_no){
             params.member_no = member_no;

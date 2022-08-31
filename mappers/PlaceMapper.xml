@@ -18,6 +18,22 @@
             ,l.like_no
         </if>
         FROM places AS p
+
+        <where>
+            <if test="title != null and title != '' ">
+                title LIKE concat('%', #{title}, '%')
+            </if>
+            <if test="introduction != null and introduction !='' ">
+                OR introduction LIKE concat('%', #{introduction}, '%')
+            </if>
+            <if test="alltag != null and alltag !='' ">
+                OR alltag LIKE concat('%', #{alltag}, '%')
+            </if>
+            <if test="tag != null and tag !='' ">
+                OR tag LIKE concat('%', #{tag}, '%')
+            </if>
+        </where>
+
         <if test="member_no != null and member_no != ''">
         LEFT OUTER JOIN likes AS l ON p.place_no = l.ref_id 
         AND ref_type='P'

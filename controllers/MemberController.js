@@ -242,6 +242,7 @@ const MemberController = () => {
             } catch (error) {
                 return next(error);
             }
+            console.log(req.file);
 
             //로그인된 회원번호_세션에 저장된 데이터 가져오기
             const member_no = req.session.user.member_no;
@@ -250,7 +251,7 @@ const MemberController = () => {
             const birthday = req.post('birthday');
             const email = req.post('email');
             //업로드된 파일 경로 
-            const profile_img = req.file.path;
+            const profile_img = 'profile_img/'+req.file.savename;
             const profile_thumb = req.file.thumbnail["480w"];
             
             //사용자입력값 유효성 검사

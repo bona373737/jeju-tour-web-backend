@@ -134,7 +134,7 @@ const MemberController = () => {
         // 회원정보 저장할 변수
         let json = null;
 
-        if (req.session.user  === undefined) { // 로그아웃 상태
+        if (req.session.user === undefined) { // 로그아웃 상태
             const err = new BadRequestException('로그인을 해주세요.');
             return next(err);
         } else { // 로그인 상태
@@ -200,23 +200,14 @@ const MemberController = () => {
 
     /** 회원 로그아웃 */
     router.delete(urlLog, async (req, res, next) => {
-        // 회원정보 초기화할 변수
-        let json = null;
-
+        
         try {
             await req.session.destroy();
-            json = {
-                member_no: null,
-                userid: null,
-                username: null,
-                profile_img: null,
-                profile_thumb: null,
-            }
         } catch (err) {
             return next(err);
         }
         
-        res.sendResult({item: json});
+        res.sendResult();
     });
     
     /** 회원정보 수정 */

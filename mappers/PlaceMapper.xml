@@ -18,6 +18,11 @@
             ,l.like_no
         </if>
         FROM places AS p
+        
+        <if test="member_no != null and member_no != ''">
+        LEFT OUTER JOIN likes AS l ON p.place_no = l.ref_id 
+        AND l.ref_type='P' AND l.member_no = #{member_no}
+        </if>
 
         <where>
             <if test="title != null and title != '' ">
@@ -34,11 +39,6 @@
             </if>
         </where>
 
-        <if test="member_no != null and member_no != ''">
-        LEFT OUTER JOIN likes AS l ON p.place_no = l.ref_id 
-        AND ref_type='P'
-        AND member_no = #{member_no}
-        </if>
 
         ORDER BY place_no DESC
 

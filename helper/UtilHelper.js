@@ -57,6 +57,9 @@ const pagenation = (totalCount=0, nowPage=1, listCount=10, groupCount=5) => {
     // 전체 페이지 수
     var totalPage = parseInt(((totalCount - 1) / listCount)) + 1;
 
+    //마지막페이지여부
+    var isEnd = totalPage === nowPage? true:false;
+
     // 전체 그룹 수
     var totalGroup = parseInt(((totalPage) - 1) / (groupCount)) + 1;
 
@@ -93,7 +96,8 @@ const pagenation = (totalCount=0, nowPage=1, listCount=10, groupCount=5) => {
         groupEnd : groupEnd,
         prevGroupLastPage : prevGroupLastPage,
         nextGroupFirstPage : nextGroupFirstPage,
-        offset : offset
+        offset : offset,
+        isEnd : isEnd
     };
 };
 

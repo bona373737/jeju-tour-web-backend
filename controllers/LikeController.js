@@ -49,50 +49,50 @@ const LikeController = () => {
     });
 
     /** 좋아요여부확인기능_member_no, ref_id, ref_type값으로 데이터 조회 */
-    router.get(`${url}/isliked`, async (req, res, next) => {
-        // 파라미터
-        // const member_no = req.get('member_no');
-        const member_no = req.session.user.member_no;
-        const ref_id = req.get('ref_id');
-        let ref_type = req.get('ref_type');
+    // router.get(`${url}/isliked`, async (req, res, next) => {
+    //     // 파라미터
+    //     // const member_no = req.get('member_no');
+    //     const member_no = req.session.user.member_no;
+    //     const ref_id = req.get('ref_id');
+    //     let ref_type = req.get('ref_type');
 
-        switch (ref_type) {
-            case 'place':
-                ref_type='P';
-                break;
-            case 'accom':
-                ref_type='A';
-                break;
-            case 'food':
-                ref_type='F';
-                break;
-            default:
-                break;
-        }
+    //     switch (ref_type) {
+    //         case 'place':
+    //             ref_type='P';
+    //             break;
+    //         case 'accom':
+    //             ref_type='A';
+    //             break;
+    //         case 'food':
+    //             ref_type='F';
+    //             break;
+    //         default:
+    //             break;
+    //     }
 
-        // 파라미터 유효성검사
-        try {
+    //     // 파라미터 유효성검사
+    //     try {
             
-        } catch (error) {
+    //     } catch (error) {
             
-        }
+    //     }
         
-        //파라미터 객체에 담기
-        const params = {};
-        params.member_no = Number(member_no);
-        params.ref_id = Number(ref_id);
-        params.ref_type = ref_type;
+    //     //파라미터 객체에 담기
+    //     const params = {};
+    //     params.member_no = Number(member_no);
+    //     params.ref_id = Number(ref_id);
+    //     params.ref_type = ref_type;
 
-        //
-        let json = null;
-        try {
-            json = await LikeService.selectItem(params);
-        } catch (err) {
-            return next(err);
-        }
-        //응답데이터 없음 ->현재 로그인된 사용자가 해당 여행정보를 좋아요 했는지 여부만 확인필요.
-        res.sendResult({item:{isLiked :true, like_no:json.like_no }});
-    });
+    //     //
+    //     let json = null;
+    //     try {
+    //         json = await LikeService.selectItem(params);
+    //     } catch (err) {
+    //         return next(err);
+    //     }
+    //     //응답데이터 없음 ->현재 로그인된 사용자가 해당 여행정보를 좋아요 했는지 여부만 확인필요.
+    //     res.sendResult({item:{isLiked :true, like_no:json.like_no }});
+    // });
 
     /** 데이터 추가 --> Create(INSERT) */
     router.post(url, async (req, res, next) => {

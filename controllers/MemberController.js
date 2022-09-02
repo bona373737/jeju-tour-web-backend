@@ -134,7 +134,7 @@ const MemberController = () => {
         // 회원정보 저장할 변수
         let json = null;
 
-        if (req.session.user  === undefined) { // 로그아웃 상태
+        if (req.session.user === undefined) { // 로그아웃 상태
             const err = new BadRequestException('로그인을 해주세요.');
             return next(err);
         } else { // 로그인 상태
@@ -200,23 +200,14 @@ const MemberController = () => {
 
     /** 회원 로그아웃 */
     router.delete(urlLog, async (req, res, next) => {
-        // 회원정보 초기화할 변수
-        let json = null;
-
+        
         try {
             await req.session.destroy();
-            json = {
-                member_no: null,
-                userid: null,
-                username: null,
-                profile_img: null,
-                profile_thumb: null,
-            }
         } catch (err) {
             return next(err);
         }
         
-        res.sendResult({item: json});
+        res.sendResult();
     });
     
     /** 회원정보 수정 */
@@ -242,6 +233,7 @@ const MemberController = () => {
             } catch (error) {
                 return next(error);
             }
+            console.log(req.file);
 
             //로그인된 회원번호_세션에 저장된 데이터 가져오기
             const member_no = req.session.user.member_no;
@@ -250,7 +242,7 @@ const MemberController = () => {
             const birthday = req.post('birthday');
             const email = req.post('email');
             //업로드된 파일 경로 
-            const profile_img = req.file.path;
+            const profile_img = 'profile_img/'+req.file.savename;
             const profile_thumb = req.file.thumbnail["480w"];
             
             //사용자입력값 유효성 검사

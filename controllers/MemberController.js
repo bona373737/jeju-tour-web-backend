@@ -30,6 +30,34 @@ const MemberController = () => {
     const router = express.Router();
     const now = dayjs();
 
+    router.post(`${url}/ismember`, async (req, res, next) => {
+        // 회원 아이디 받기
+        const userid = req.post('userid');
+
+        // 회원 아이디 유효성 검사
+        try {
+            regexHelper.value(userid, '회원아이디를 입력하세요.');
+        } catch (err) {
+            return next(err);
+        }
+
+        // 회원 단일 데이터 조회
+        let json = null;
+        
+        try {
+            //사용중인 아이디가 있는 경우-> 에러발생시키기
+            json = await MemberService.isMember({
+                userid: userid
+            });
+            
+        } catch (err) {
+            //사용중이 아이디가 있는 경우 "rtmsg : 사용중인 아이디입니다." 
+            return next(err);
+        }
+
+        res.sendResult({rtmsg:"사용가능한 아이디입니다"});
+    });
+
     /** 회원 가입 */
     router.post(url, async(req,res,next)=>{
         // console.log(req.sessionID);
@@ -89,19 +117,6 @@ const MemberController = () => {
         // res.sendResult({item: "성공"});
     });
 
-    /** 관리자페이지 : 회원 전체 데이터 조회 */
-    router.get(url, async (req, res, next) => {
-        let json = null;
-
-        try {
-            json = await MemberService.selectList();
-        } catch (err) {
-            return next(err);
-        }
-
-        res.sendResult({ item: json });
-    });
-
     /** 관리자페이지 : 회원 단일 데이터 조회 */
     router.get(`${url}/:member_no`, async (req, res, next) => {
         // 회원 일련번호 받기
@@ -122,6 +137,19 @@ const MemberController = () => {
             json = await MemberService.selectItem({
                 member_no: member_no
             });
+        } catch (err) {
+            return next(err);
+        }
+
+        res.sendResult({ item: json });
+    });
+
+    /** 관리자페이지 : 회원 전체 데이터 조회 */
+    router.get(url, async (req, res, next) => {
+        let json = null;
+
+        try {
+            json = await MemberService.selectList();
         } catch (err) {
             return next(err);
         }
@@ -206,6 +234,7 @@ const MemberController = () => {
         } catch (err) {
             return next(err);
         }
+        
         res.sendResult();
     });
     

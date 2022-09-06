@@ -206,7 +206,6 @@ const MemberController = () => {
         } catch (err) {
             return next(err);
         }
-        
         res.sendResult();
     });
     

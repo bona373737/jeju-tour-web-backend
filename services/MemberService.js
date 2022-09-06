@@ -157,5 +157,38 @@ class MemberService{
         }
         return data; 
     }
+
+    /**
+     * 중복아이디 검사기능
+     * @param {string} params : 사용자입력값 userid
+     * @returns : 중복아이디있는 경우-> 에러객체반환_data.rtmsg:"사용중인 아이디 입니다."
+     *            중복아이디없는 경우-> data.rtmsg:"사용가능한 아이디 입니다"
+     */
+    async isMember(params) {
+        let dbcon = null;
+        let data = null;
+
+        try {
+            dbcon = await DBPool.getConnection();
+
+            let sql = mybatisMapper.getStatement("MemberMapper", "selectUserid", params);
+            let [result] = await dbcon.query(sql);
+            
+            //result 값이 존재하는 경우 -> 중복된 아이디가 있음
+            if (result.length !== 0) {
+                throw new RuntimeException('사용중인 아이디 입니다.');
+            }
+
+            //result 값이 존재하지 않는 경우 -> 중복된 아이디가 없음
+            if (result.length === 0) {
+                return;
+            }
+        } catch (err) {
+            throw err;
+        } finally {
+            if (dbcon) { dbcon.release(); }
+        }
+        return data; 
+    }
 }
 export default new MemberService;

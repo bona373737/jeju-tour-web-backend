@@ -134,7 +134,7 @@ class MemberService{
         return data;
     }
 
-    /** 아이디가 일치하는 회원 조회 */
+    /** 로그인 - 아이디가 일치하는 회원 조회 */
     async selectUserid(params) {
         let dbcon = null;
         let data = null;
@@ -146,7 +146,8 @@ class MemberService{
             let [result] = await dbcon.query(sql);
             
             if (result.length === 0) {
-                throw new RuntimeException('아이디가 일치하지 않습니다. 다시 확인해주세요.');
+                // 아이디만 체크하지만, 비밀번호 확인과 에러메시지는 통일
+                throw new RuntimeException('아이디 또는 비밀번호를 잘못 입력했습니다. <br/> 입력하신 내용을 다시 확인해주세요.');
             }
 
             data = result[0];

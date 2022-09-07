@@ -201,6 +201,7 @@ const MemberController = () => {
                 userid: id,
             });
         } catch (err) {
+            // 일치하지 않으면 에러 발생 -->
             return next(err);
         }
         
@@ -208,7 +209,6 @@ const MemberController = () => {
         const { member_no, userid, password, username, profile_img, profile_thumb } = json;
         // 비밀번호 비교 (복호화된 원본 비밀번호와 DB에 있는 해시 비밀번호와 비교)
         const checkPassword = await bcrypt.compare(decrypted, password);
-
 
         if (checkPassword) { // password 일치 --> 로그인 성공
             req.session.user = {
@@ -219,7 +219,8 @@ const MemberController = () => {
                 profile_thumb: profile_thumb,
             };
         } else { // password 불일치 --> 로그인 실패
-            const err = new BadRequestException('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
+            // 비밀번호만 체크하지만, 아이디 확인과 에러 메시지는 통일
+            const err = new BadRequestException('아이디 또는 비밀번호를 잘못 입력했습니다. <br/> 입력하신 내용을 다시 확인해주세요.');
             return next(err);
         }
 

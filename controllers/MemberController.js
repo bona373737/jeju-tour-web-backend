@@ -201,7 +201,7 @@ const MemberController = () => {
                 userid: id,
             });
         } catch (err) {
-            // 일치하지 않으면 에러 발생 -->
+            // 일치하지 않으면 에러 발생
             return next(err);
         }
         

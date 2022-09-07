@@ -8,6 +8,7 @@ import express from 'express';
 import dayjs from 'dayjs';
 import cryptojs from 'crypto-js';
 import bcrypt from 'bcrypt';
+import nodemailer from 'nodemailer'; // 메일발송 --> app.use()로 추가설정 필요 없음
 import multer from 'multer';
 // import formidable from 'formidable';
 // import { json } from 'body-parser';
@@ -30,6 +31,7 @@ const MemberController = () => {
     const router = express.Router();
     const now = dayjs();
 
+    /** 중복아이디 검사기능 */
     router.post(`${url}/ismember`, async (req, res, next) => {
         // 회원 아이디 받기
         const userid = req.post('userid');
@@ -56,6 +58,50 @@ const MemberController = () => {
         }
 
         res.sendResult({rtmsg:"사용가능한 아이디입니다"});
+    });
+
+    /** 회원 메일인증 */
+    router.post(`${url}/verify`, async (req, res, next) => {
+        // 회원 아이디 받기
+        const receiver_email = req.post('email');
+        const writer_email = "nana@naver.com"
+        const subject = "[비밀번호 변경 메일인증]";
+        const content = "123"; //난수 발생시켜서 전송하기
+
+        // 회원 아이디 유효성 검사
+        try {
+            regexHelper.value(writer_email, '전송보낼 메일주소를 입력하세요.');
+        } catch (err) {
+            return next(err);
+        }
+
+        /** 메일 발송정보 구성 */
+        const send_info = {
+            from: writer_email,
+            to: receiver_email,
+            subject: subject,
+            html: content
+        };
+    
+        /** 발송에 필요한 서버 정보를 사용하여 발송객체 생성*/
+        const smtp = nodemailer.createTransport({
+            host: process.env.SMTP_HOST,            
+            port: process.env.SMTP_PORT,            
+            secure: true,                           
+            auth: {
+                user: process.env.SMTP_USERNAME,    
+                pass: process.env.SMTP_PASSWORD,    
+            }
+        });
+    
+        /** 메일발송 요청 */
+        try {
+            smtp.sendMail(send_info);
+        } catch (err) {
+            return next(err);
+        }
+    
+        res.sendResult();
     });
 
     /** 회원 가입 */
@@ -205,7 +251,7 @@ const MemberController = () => {
         }
         
         // 가져온 회원정보에서 필요한 값만 추출
-        const { member_no, userid, password, username, profile_img, profile_thumb } = json;
+        const { member_no, userid, password, username, profile_img, profile_thumb,email,birthday } = json;
         // 비밀번호 비교 (복호화된 원본 비밀번호와 DB에 있는 해시 비밀번호와 비교)
         const checkPassword = await bcrypt.compare(decrypted, password);
 
@@ -217,6 +263,8 @@ const MemberController = () => {
                 username: username,
                 profile_img: profile_img,
                 profile_thumb: profile_thumb,
+                email:email,
+                birthday:birthday
             };
         } else { // password 불일치 --> 로그인 실패
             const err = new BadRequestException('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
@@ -255,13 +303,14 @@ const MemberController = () => {
                 return next(new MultipartException(err));
             }
 
+
+            console.log(req.file);
             // 업로드 결과가 성공이라면 썸네일 생성 함수를 호출한다.
             try {
                 createThumbnail(req.file, dirName);
             } catch (error) {
                 return next(error);
             }
-            console.log(req.file);
 
             //로그인된 회원번호_세션에 저장된 데이터 가져오기
             const member_no = req.session.user.member_no;
@@ -294,8 +343,14 @@ const MemberController = () => {
             } catch (error) {
                 return next(err);
             }
-            
-            // console.log(json)
+
+            if(json){
+                req.session.user.birthday = json.birthday;
+                req.session.user.email = json.email;
+                req.session.user.profile_img = json.profile_img;
+                req.session.user.profile_thumb = json.profile_thumb;
+            }
+
             res.sendResult({item:json});
         })
     

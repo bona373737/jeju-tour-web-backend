@@ -23,6 +23,8 @@ import cors from "cors";
 import PageNotFoundException from "./exceptions/PageNotFoundException.js";
 /** URL을 라우팅하는 모듈 참조 */
 import PlaceController from "./controllers/PlaceController.js";
+import AccomController from "./controllers/AccomController.js";
+import FoodController from "./controllers/FoodController.js";
 import MemberController from "./controllers/MemberController.js";
 import LikeController from "./controllers/LikeController.js";
 import NoticeController from "./controllers/NoticeController.js";
@@ -111,6 +113,8 @@ app.use(WebHelper());
     이부분은 미들웨어 순서대로 실행된다기 보다는 맞는 url에 매칭되는 controller가 실행된다 
 -----------------------------------------------------------*/
 app.use(PlaceController());
+app.use(AccomController());
+app.use(FoodController());
 app.use(MemberController());
 app.use(LikeController());
 app.use(NoticeController());

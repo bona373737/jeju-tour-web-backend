@@ -3,20 +3,42 @@
 
 <mapper namespace="AccomMapper">
 
- <!-- select 단일행 -->
+    <!-- select 단일행 -->
     <select id="selectItem">
-        SELECT accom_no,title, introduction, sbst, postcode, address, roadaddress, phoneno, alltag, tag, longitude, latitude, reg_date, edit_date, image, thumbnail
+        SELECT accom_no, title, introduction, sbst, postcode, address, roadaddress, phoneno, alltag, tag, longitude, latitude, reg_date, edit_date, image, thumbnail
         FROM accoms 
-        WHERE accom_no=#{accom_no};
+        WHERE accom_no = #{accom_no}
     </select>
 
     <!-- select 다중행 -->
+    <!-- 로그인상태 member_no값의 여부에 따라 검색 쿼리 변경 : 좋아요 된상태 -->
     <select id="selectList">
-        SELECT accom_no, title, introduction, sbst, postcode, address, roadaddress, phoneno, alltag, tag, longitude, latitude, reg_date, edit_date, image, thumbnail 
-        FROM accoms 
+        SELECT p.accom_no, p.title, p.introduction, p.sbst, p.postcode, p.address, p.roadaddress, p.phoneno, p.alltag, p.tag, p.longitude, p.latitude, p.reg_date, p.edit_date, p.image, p.thumbnail 
+        <if test="member_no != null and member_no != ''">
+            ,l.like_no
+        </if>
+        FROM accoms AS p
+        
+        <if test="member_no != null and member_no != ''">
+        LEFT OUTER JOIN likes AS l ON p.accom_no = l.ref_id 
+        AND l.ref_type='A' AND l.member_no = #{member_no}
+        </if>
+
         <where>
-   
+            <if test="title != null and title != '' ">
+                title LIKE concat('%', #{title}, '%')
+            </if>
+            <if test="introduction != null and introduction !='' ">
+                OR introduction LIKE concat('%', #{introduction}, '%')
+            </if>
+            <if test="alltag != null and alltag !='' ">
+                OR alltag LIKE concat('%', #{alltag}, '%')
+            </if>
+            <if test="tag != null and tag !='' ">
+                OR tag LIKE concat('%', #{tag}, '%')
+            </if>
         </where>
+
         ORDER BY accom_no DESC
 
         <if test="listCount>0">
@@ -27,9 +49,11 @@
     <!-- 데이터 전체개수 -->
     <select id="selectCountAll">
         SELECT COUNT(*) AS cnt FROM accoms
-        <where>
-
-        </where>
-
     </select>
+
+    <!-- 여행지 정보 추가 -->
+    <insert id='insertItem'>
+    INSERT INTO accoms (title,introduction,sbst,postcode,address,roadaddress,phoneno, alltag, tag, longitude,latitude, reg_date, edit_date, image, thumbnail)
+    VALUES (#{title}, #{introduction}, #{sbst}, #{postcode}, #{address}, #{roadaddress}, #{phoneno}, #{alltag}, #{tag}, #{longitude}, #{latitude}, #{reg_date}, #{edit_date}, #{image}, #{thumbnail});
+    </insert>
 </mapper>

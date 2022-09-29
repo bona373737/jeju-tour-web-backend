@@ -190,6 +190,6 @@ class MemberService{
             if (dbcon) { dbcon.release(); }
         }
         return data; 
-    }
+    }    
 }
 export default new MemberService;

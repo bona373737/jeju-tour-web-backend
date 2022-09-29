@@ -1,10 +1,10 @@
 import express from 'express';
 import regexHelper from '../helper/RegexHelper.js';
 import {pagenation} from '../helper/UtilHelper.js';
-import accomService from '../services/AccomService.js';
+import foodService from '../services/FoodService.js';
 
-const AccomController = () => {
-    const url = "/accom";
+const FoodController = () => {
+    const url = "/food";
     const router = express.Router();
 
     // 여행지 다중행 조회
@@ -31,12 +31,12 @@ const AccomController = () => {
         let pageInfo = null;
 
         try {
-            const totalCount = await accomService.selectCountAll(params);
+            const totalCount = await foodService.selectCountAll(params);
             pageInfo = pagenation(totalCount, page, rows);
             
             params.offset = pageInfo.offset;
             params.listCount = pageInfo.listCount;
-            json = await accomService.selectList(params);
+            json = await foodService.selectList(params);
         } catch (err) {
             return next(err);
         }
@@ -46,12 +46,12 @@ const AccomController = () => {
 
 
     // 여행지 단일행 조회
-    router.get(`${url}/:accom_no`, async (req, res, next) => {
-        const accom_no = req.get("accom_no");
+    router.get(`${url}/:food_no`, async (req, res, next) => {
+        const food_no = req.get("food_no");
 
         try {
-            regexHelper.value(accom_no, "관광지번호가 없습니다.");
-            regexHelper.num(accom_no, "관광지 번호는 숫자입니다.");
+            regexHelper.value(food_no, "관광지번호가 없습니다.");
+            regexHelper.num(food_no, "관광지 번호는 숫자입니다.");
         } catch (err) {
             return next(err);
         }
@@ -59,8 +59,8 @@ const AccomController = () => {
         let json = null;
 
         try {
-            json = await accomService.selectItem({
-                accom_no: accom_no,
+            json = await foodService.selectItem({
+                food_no: food_no,
             });
         } catch (err) {
             return next(err);
@@ -71,4 +71,4 @@ const AccomController = () => {
     return router;
 };
 
-export default AccomController;
+export default FoodController;

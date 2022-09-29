@@ -2,11 +2,11 @@ import mybatisMapper from 'mybatis-mapper';
 import DBPool from '../helper/DBPool.js';
 import RuntimeException from '../exceptions/RuntimeException.js';
 
-class AccomService{
+class FoodService{
 
     constructor(){
         mybatisMapper.createMapper([
-            './mappers/AccomMapper.xml'
+            './mappers/FoodMapper.xml'
         ])
     }
 
@@ -18,7 +18,7 @@ class AccomService{
 
         try {
             dbcon = await DBPool.getConnection();
-            let sql = mybatisMapper.getStatement('AccomMapper','selectItem',params)
+            let sql = mybatisMapper.getStatement('FoodMapper','selectItem',params)
             let [result] = await dbcon.query(sql);
 
             if(result.length === 0){
@@ -40,7 +40,7 @@ class AccomService{
 
         try {
             dbcon = await DBPool.getConnection();
-            let sql = mybatisMapper.getStatement('AccomMapper','selectList',params)
+            let sql = mybatisMapper.getStatement('FoodMapper','selectList',params)
             let [result] = await dbcon.query(sql);
 
             if(result.length === 0){
@@ -63,7 +63,7 @@ class AccomService{
         try {
             dbcon = await DBPool.getConnection();
 
-            let sql = mybatisMapper.getStatement('AccomMapper', 'selectCountAll', params);
+            let sql = mybatisMapper.getStatement('FoodMapper', 'selectCountAll', params);
             let [result] = await dbcon.query(sql);
 
             if (result.length > 0) {
@@ -86,7 +86,7 @@ class AccomService{
             dbcon = await DBPool.getConnection();
 
             //데이터 추가
-            let sql = mybatisMapper.getStatement('AccomMapper','insertItem',params)
+            let sql = mybatisMapper.getStatement('FoodMapper','insertItem',params)
             let [{insertId, affectedRows}] = await dbcon.query(sql);
 
             if(affectedRows === 0){
@@ -94,7 +94,7 @@ class AccomService{
             }
 
             //추가된 데이터(신규등록한 회원정보) 조회_비밀번호를 제외한 데이터를 반환한다.
-            sql = mybatisMapper.getStatement('AccomMapper','selectItem',{place_no:insertId})
+            sql = mybatisMapper.getStatement('FoodMapper','selectItem',{place_no:insertId})
             let [result] = await dbcon.query(sql);
 
             if(result.length === 0){
@@ -113,4 +113,4 @@ class AccomService{
     }
 }
 
-export default new AccomService;
+export default new FoodService;

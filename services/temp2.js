@@ -16,7 +16,6 @@ class DBPool {
     //DB접속정보 설정
     static connectionInfo = {
         host : "localhost",    //mysql 서버주소(다른 pc인 경우 IT주소)
-        // port : 9903,              //mysql 포트번호
         port : 3306,              //mysql 포트번호
         user : "jeju",            //mysql의 로그인 할 수 있는 계정이름
         password : "",  //비밀번호
@@ -108,7 +107,7 @@ class DBPool {
             //데이터 수정
             let count = 1;
             for(let i=0; i<60; i++){
-                let sql = `update foods set image="tourinfo/food${count}.jpeg" where food_no=${count}`;
+                let sql = `update accoms set image="tourinfo/accom${count}.jpeg" where accom_no=${count}`;
                 let [{insertId, affectedRows}] = await dbcon.query(sql);
                 count++;
             }

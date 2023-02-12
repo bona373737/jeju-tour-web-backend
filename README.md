@@ -16,6 +16,48 @@
 
 ---
 
+```
+app.js
+controllers ─┬─ AccomControllers.js
+             ├─ FoodController.js
+             ├─ PlaceController.js
+             ├─ MemberController.js
+             ├─ LikeController.js
+             ├─ ReviewController.js
+             ├─ FAQControllers.js
+             └─ NoticeControllers.js
+service ─────┬─ AccomService.js
+             ├─ FoodService.js
+             ├─ PlaceService.js
+             ├─ MemberService.js
+             ├─ LikeService.js
+             ├─ ReviewService.js
+             ├─ FAQService.js
+             └─ NoticeService.js
+mappers  ────┬─ AccomMapper.xml
+             ├─ FoodMapper.xml
+             ├─ PlaceMapper.xml
+             ├─ MemberMapper.xml
+             ├─ LikeMapper.xml
+             ├─ ReviewMapper.xml
+             ├─ FAQMapper.xml
+             └─ NoticeMapper.xml
+helper ──────┬─ DBPool.js
+             ├─ FileHelper.js
+             ├─ LogHelper.js
+             ├─ RegexHelper.js
+             ├─ UtilHelper.js
+             └─ WebHelper.js
+exceptions ─┬─ BaxRequestException.js
+            ├─ MultipartException.js
+            ├─ PageNotFoundExeption.js
+            └─ RuntimeExceptions.js
+
+
+```
+
+
+
 ## [ 기능 : 회원가입 ]
 
 1. 회원 등록

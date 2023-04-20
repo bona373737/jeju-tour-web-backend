@@ -72,6 +72,7 @@ class LikeService{
             dbcon = await DBPool.getConnection();
             let sql = mybatisMapper.getStatement('LikeMapper','selectCount',params)
             let [result] = await dbcon.query(sql);
+            console.log(result)
 
             if(result.length === 0){
                 throw new RuntimeException('조회된 데이터가 없습니다.')

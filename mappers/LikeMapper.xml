@@ -12,7 +12,7 @@
     </select>
 
     <select id="selectCount">
-        SELECT count(*) FROM likes WHERE member_no=#{member_no};
+        SELECT count(*) as cnt FROM likes WHERE member_no=#{member_no};
     </select>
 
     <!-- <select id="selectItem">

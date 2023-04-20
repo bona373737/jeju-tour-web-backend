@@ -48,6 +48,20 @@ const LikeController = () => {
         res.sendResult({pagenation: pageInfo, item: json});
     });
 
+    router.get(`${url}/count`, async (req, res, next) => {
+        const member_no = req.session.user.member_no;
+
+        let cnt = null;
+
+        try {
+            cnt = await LikeService.selectCount({"member_no":member_no});            
+        } catch (err) {
+            return next(err);
+        }
+        res.sendResult({item:cnt});
+    });
+
+
     /** 좋아요여부확인기능_member_no, ref_id, ref_type값으로 데이터 조회 */
     // router.get(`${url}/isliked`, async (req, res, next) => {
     //     // 파라미터

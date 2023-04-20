@@ -304,7 +304,6 @@ const MemberController = () => {
                 return next(new MultipartException(err));
             }
 
-
             console.log(req.file);
             // 업로드 결과가 성공이라면 썸네일 생성 함수를 호출한다.
             try {
